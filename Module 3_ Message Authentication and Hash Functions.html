@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Module 3: Message Authentication and Hash Functions</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f7fc;--card:#fff;--ink:#1c1f3a;--mut:#555a7a;--line:#d9dcee;--teal:#0b9aa0;--coral:#e8446b;--amber:#f2a900;--vio:#6a57e0;--tealbg:#d9f3f3;--corbg:#fde1e8;--ambbg:#fff1c9;--viobg:#e5e1fc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12142a;--card:#1c1f3a;--ink:#eceefb;--mut:#a5a9cc;--line:#343862;--tealbg:#0d3b40;--corbg:#4a1e2c;--ambbg:#45380c;--viobg:#2b2760}}
+:root[data-theme="dark"]{--bg:#12142a;--card:#1c1f3a;--ink:#eceefb;--mut:#a5a9cc;--line:#343862;--tealbg:#0d3b40;--corbg:#4a1e2c;--ambbg:#45380c;--viobg:#2b2760}
+html{scroll-padding-top:calc(60px + env(safe-area-inset-top,0px));scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 'Source Serif 4',Georgia,serif}
+h1,h2,h3,nav{font-family:'Bricolage Grotesque',system-ui,sans-serif}
+header{background:linear-gradient(120deg,var(--coral),var(--vio));color:#fff;padding:48px 20px 40px}
+header div,main{max-width:860px;margin:auto}
+h1{font-size:clamp(30px,6vw,52px);line-height:1.1;margin:0 0 10px;font-weight:800}header p{margin:0;max-width:60ch}
+nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;gap:4px;overflow-x:auto;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top,0px))}
+nav a{white-space:nowrap;color:var(--ink);text-decoration:none;font-size:14px;padding:5px 11px;border-radius:99px;font-weight:600}nav a:hover{background:var(--viobg)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
+main{padding:10px 18px 60px}section{margin-top:44px}
+h2{font-size:30px;margin:0 0 6px;border-left:8px solid var(--coral);padding-left:12px}
+h3{font-size:20px;margin:26px 0 6px;color:var(--vio)}p{max-width:70ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;overflow-x:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:12px 0}
+.grid>div{border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.5}.grid b{font-family:'Bricolage Grotesque',sans-serif;display:block;font-size:17px}
+.t{background:var(--tealbg)}.c{background:var(--corbg)}.a{background:var(--ambbg)}.v{background:var(--viobg)}
+button,input,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+button{cursor:pointer;font-weight:600}button:hover,button.on{background:var(--vio);color:#fff;border-color:var(--vio)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:14px;word-break:break-all}
+table{border-collapse:collapse;font-size:14px;font-family:'Bricolage Grotesque',sans-serif}td,th{border:1px solid var(--line);padding:5px 9px;text-align:center}th{background:var(--viobg)}
+svg{max-width:100%;height:auto}svg text{font-family:'Bricolage Grotesque',sans-serif;fill:#1c1f3a}
+.chip{display:inline-block;margin:3px;padding:4px 10px;border-radius:8px;color:#fff;font:600 13px 'Bricolage Grotesque',sans-serif}
+mark{background:var(--amber);color:#1c1f3a;border-radius:3px}
+.ok{color:var(--teal);font-weight:600}.no{color:var(--coral);font-weight:600}
+</style></head><body>
+<header><div><h1>Message Authentication and Hash Functions</h1><p>Module 3 of Cryptography and Network Security (CCA42011). The hash, HMAC, signature and Kerberos tools below use real calculations.</p></div></header>
+<nav><a href="#b1">Requirements</a><a href="#b2">Functions</a><a href="#b3">Hash</a><a href="#b4">SHA</a><a href="#b5">MAC and HMAC</a><a href="#b6">CMAC</a><a href="#b7">Signatures</a><a href="#b8">Protocols</a><a href="#b9">DSS</a><a href="#b10">Kerberos</a><a href="#b11">X.509</a><a href="#b12">PKI</a><a href="#b13">Quiz</a></nav>
+<main>
+
+<section id="b1"><h2>Authentication requirements</h2>
+<p>Encryption hides content, but it does not prove who sent a message or that it is unchanged. Authentication defends against these attacks on communication.</p>
+<div class="grid"><div class="c"><b>Disclosure</b>Content released to someone without the key.</div><div class="a"><b>Traffic analysis</b>Pattern of who talks, when and how much.</div><div class="v"><b>Masquerade</b>Fraudulent messages from a false source.</div><div class="t"><b>Content modification</b>Message body changed in transit.</div><div class="c"><b>Sequence modification</b>Messages deleted, reordered or inserted.</div><div class="a"><b>Timing modification</b>Delay or replay of valid messages.</div><div class="v"><b>Source repudiation</b>Sender denies having sent it.</div><div class="t"><b>Destination repudiation</b>Receiver denies having received it.</div></div></section>
+
+<section id="b2"><h2>Authentication functions</h2>
+<p>Every scheme has a low-level function that produces an <b>authenticator</b> and a higher-level protocol that uses it. Three families of function exist.</p>
+<div class="grid"><div class="v"><b>Message encryption</b>The ciphertext itself is the authenticator. With symmetric keys only the key holders could have made it, but the receiver needs redundancy in the plaintext to recognise a valid message.</div><div class="t"><b>Message authentication code</b>A short tag computed from message and a shared key. The message can stay in clear text.</div><div class="a"><b>Hash function</b>A fixed-size digest of the message with no key. It must be protected, for example by encryption or a signature.</div></div></section>
+
+<section id="b3"><h2>Hash functions</h2>
+<p>A hash H maps any input to a fixed-size digest. Three properties matter: <b>preimage resistance</b> (given h, finding M is hard), <b>second-preimage resistance</b> (given M1, finding M2 with the same hash is hard) and <b>collision resistance</b> (finding any pair is hard). By the birthday paradox, collisions in an n-bit hash need only about 2<sup>n/2</sup> tries, so a 256-bit hash gives 128-bit collision security. Type a message. The second text differs by one flipped bit in its first character, and yellow marks the hex digits that changed (the avalanche effect).</p>
+<div class="box"><div class="row"><input id="hIn" value="Pay Alice 100 rupees" size="34" aria-label="Message"></div><p class="mono" id="h1"></p><p class="mono" id="h2"></p><p id="hN"></p></div></section>
+
+<section id="b4"><h2>Secure Hash Algorithm (SHA)</h2>
+<div class="box"><table><tr><th>Algorithm</th><th>Digest</th><th>Block</th><th>Rounds</th><th>Status</th></tr><tr><td>SHA-1</td><td>160</td><td>512</td><td>80</td><td style="background:var(--corbg)">Collisions found; avoid</td></tr><tr><td>SHA-256</td><td>256</td><td>512</td><td>64</td><td style="background:var(--tealbg)">Recommended</td></tr><tr><td>SHA-384</td><td>384</td><td>1024</td><td>80</td><td style="background:var(--tealbg)">Recommended</td></tr><tr><td>SHA-512</td><td>512</td><td>1024</td><td>80</td><td style="background:var(--tealbg)">Recommended</td></tr><tr><td>SHA-3</td><td>224 to 512</td><td>sponge</td><td>24</td><td style="background:var(--viobg)">Different design (Keccak)</td></tr></table></div>
+<p>SHA-256 pads the message with a single 1 bit, then zeros, then the 64-bit message length, so the total is a multiple of 512 bits. Each block runs 64 rounds of a compression function on eight 32-bit variables, chained from the previous digest. Enter a message length to see the padding.</p>
+<div class="box"><div class="row"><label>Message bytes <input id="pL" type="number" min="0" value="3" style="width:90px"></label></div><div id="pOut"></div></div></section>
+
+<section id="b5"><h2>Message authentication codes and HMAC</h2>
+<p>A MAC is T = MAC(K, M). The receiver recomputes the tag and compares. It gives integrity and origin authentication but not nonrepudiation, since both sides hold K. <b>HMAC</b> builds a MAC from a hash: HMAC(K, M) = H((K′ ⊕ opad) ∥ H((K′ ⊕ ipad) ∥ M)), where K′ is the key padded to the 64-byte block, ipad is 0x36 repeated and opad is 0x5C repeated. The nesting blocks length-extension attacks that break H(K ∥ M). Below, HMAC-SHA256 is built by hand and checked against the browser’s own.</p>
+<div class="box"><div class="row"><label>Key <input id="mK" value="cryptography" size="14"></label><label>Message <input id="mM" value="hello world" size="22"></label></div>
+<p>Inner hash H((K′⊕ipad)∥M):<br><span class="mono" id="mI"></span></p><p>HMAC = H((K′⊕opad)∥inner):<br><b class="mono" id="mO"></b></p><p id="mV"></p>
+<div class="row"><label>Message the receiver got <input id="mR" value="hello world" size="22"></label></div><p id="mT"></p></div></section>
+
+<section id="b6"><h2>CMAC</h2>
+<p>CMAC makes a MAC from a block cipher such as AES. Message blocks are chained as in CBC, but the last block is XORed with a derived subkey first: K1 if the last block is complete, K2 if it needed padding (10…0). Plain CBC-MAC is only safe for fixed-length messages, and the subkeys fix this for any length. Only the final cipher output (or its leftmost bits) is kept as the tag.</p>
+<div class="box"><span class="chip" style="background:var(--vio)">M1 → E(K)</span><span class="chip" style="background:var(--vio)">⊕ M2 → E(K)</span><span class="chip" style="background:var(--vio)">⊕ M3 → E(K)</span><span class="chip" style="background:var(--amber);color:#1c1f3a">⊕ M4 ⊕ K1 or K2 → E(K)</span><span class="chip" style="background:var(--teal)">Tag T</span></div></section>
+
+<section id="b7"><h2>Digital signatures</h2>
+<p>A signature gives authentication, integrity and nonrepudiation, because only the owner holds the private key. The signer hashes the message and signs the digest; anyone verifies with the public key. The demo uses the toy RSA key from the lab (n = 3233, e = 17, d = 2753) and shrinks the hash to a number below n, so many messages collide. Real signatures use 2048-bit keys and padding.</p>
+<div class="box"><div class="row"><label>Message <input id="gM" value="Transfer 500 to Bob" size="26"></label><label>Received <input id="gR" value="Transfer 500 to Bob" size="26"></label></div><div id="gO"></div></div></section>
+
+<section id="b8"><h2>Authentication protocols</h2>
+<p>Protocols add freshness to the functions above so old messages cannot be replayed. A <b>timestamp</b> needs synchronised clocks. A <b>nonce</b> challenge-response needs none. Three-step mutual authentication with a shared key K:</p>
+<div class="box"><span class="chip" style="background:var(--teal)">1 A → B: ID<sub>A</sub> ∥ N<sub>a</sub></span><span class="chip" style="background:var(--vio)">2 B → A: E(K, N<sub>a</sub> ∥ N<sub>b</sub>)</span><span class="chip" style="background:var(--coral)">3 A → B: E(K, N<sub>b</sub>)</span><p>A sees its own N<sub>a</sub> returned, so B is live and holds K. B sees N<sub>b</sub> returned, so A does too. Fresh random nonces defeat replay.</p></div></section>
+
+<section id="b9"><h2>Digital Signature Standard (DSS)</h2>
+<p>FIPS 186 specifies DSA, RSA and ECDSA. DSA uses a prime p, a prime q dividing p−1 and a generator g of order q. The private key is x and the public key y = g<sup>x</sup> mod p. To sign hash H with a fresh secret k: r = (g<sup>k</sup> mod p) mod q and s = k<sup>−1</sup>(H + x·r) mod q. To verify: w = s<sup>−1</sup>, u1 = H·w, u2 = r·w and v = (g<sup>u1</sup>·y<sup>u2</sup> mod p) mod q, valid if v = r. Reusing or leaking k reveals x. Toy parameters p = 23, q = 11, g = 4.</p>
+<div class="box"><div class="row"><label>x (1 to 10) <input id="dx" type="number" value="3" style="width:70px"></label><label>k (1 to 10) <input id="dk" type="number" value="7" style="width:70px"></label><label>H (0 to 10) <input id="dh" type="number" value="5" style="width:70px"></label></div><div id="dO"></div></div></section>
+
+<section id="b10"><h2>Kerberos</h2>
+<p>Kerberos authenticates clients to services with symmetric keys and a trusted server, so passwords never cross the network. The client gets a ticket-granting ticket (TGT) once, then a service ticket for each server. Select a message.</p>
+<div class="box"><svg id="kSvg" viewBox="0 0 640 330" role="img" aria-label="Kerberos message flow"></svg><p id="kTxt"></p></div></section>
+
+<section id="b11"><h2>X.509 authentication service</h2>
+<p>X.509 defines the certificate that binds a public key to an identity, signed by a certification authority (CA). Click a field.</p>
+<div class="box"><div id="xF"></div><p id="xT"></p></div>
+<p>A browser trusts a certificate if its signature verifies against the issuer’s key and the chain ends at a root it already trusts. Revocation uses a Certificate Revocation List (CRL) or live OCSP queries.</p>
+<div class="box"><span class="chip" style="background:var(--coral)">Root CA (self-signed, in trust store)</span> → <span class="chip" style="background:var(--amber);color:#1c1f3a">Intermediate CA</span> → <span class="chip" style="background:var(--teal)">Server certificate</span></div></section>
+
+<section id="b12"><h2>Public-Key Infrastructure</h2>
+<div class="grid"><div class="v"><b>End entity</b>User or server that holds a certificate.</div><div class="c"><b>Certification authority</b>Issues and signs certificates, publishes revocation.</div><div class="t"><b>Registration authority</b>Verifies identity before the CA issues.</div><div class="a"><b>Repository</b>Directory where certificates and CRLs are stored.</div><div class="v"><b>Relying party</b>Anyone who checks a certificate before trusting a key.</div></div>
+<p>PKI functions: registration, initialisation, certification, key-pair recovery, key generation, key update, cross-certification and revocation. Suggested reading: the PKCS standards, such as PKCS#1 (RSA), PKCS#7 (signed and enveloped data), PKCS#10 (certificate requests) and PKCS#12 (key bundles).</p></section>
+
+<section id="b13"><h2>Check your understanding</h2><div class="box" id="quiz"></div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id),enc=new TextEncoder(),hx=u=>[...u].map(b=>b.toString(16).padStart(2,'0')).join('');
+const sha=async u=>new Uint8Array(await crypto.subtle.digest('SHA-256',u)),cat=(a,b)=>{const r=new Uint8Array(a.length+b.length);r.set(a);r.set(b,a.length);return r};
+const mp=(b,e,m)=>{b=BigInt(b);e=BigInt(e);m=BigInt(m);let r=1n;b%=m;while(e>0n){if(e&1n)r=r*b%m;b=b*b%m;e>>=1n}return Number(r)};
+const pop=x=>{let n=0;while(x){n+=x&1;x>>=1}return n};
+// hash
+async function hs(){const t=$('hIn').value,t2=t?String.fromCharCode(t.charCodeAt(0)^1)+t.slice(1):'';const a=await sha(enc.encode(t)),b=await sha(enc.encode(t2)),A=hx(a),B=hx(b);let d=0;a.forEach((v,i)=>d+=pop(v^b[i]));
+$('h1').innerHTML='“'+t+'”<br>'+A;$('h2').innerHTML='“'+t2+'”<br>'+[...B].map((c,i)=>c==A[i]?c:'<mark>'+c+'</mark>').join('');$('hN').innerHTML='<b>'+d+'</b> of 256 output bits differ (expect about 128).'}
+$('hIn').oninput=hs;hs();
+function pad(){const L=Math.max(0,+$('pL').value||0)*8,n=Math.ceil((L+65)/512),z=n*512-L-65;$('pOut').innerHTML='<span class="chip" style="background:var(--vio)">message '+L+' bits</span><span class="chip" style="background:var(--amber);color:#1c1f3a">1 bit</span><span class="chip" style="background:var(--mut)">'+z+' zero bits</span><span class="chip" style="background:var(--coral)">length 64 bits</span><p>Total '+n*512+' bits = <b>'+n+'</b> block'+(n>1?'s':'')+' of 512 bits.</p>'}
+$('pL').oninput=pad;pad();
+// HMAC
+async function hm(){const key=enc.encode($('mK').value),msg=enc.encode($('mM').value);let k=key.length>64?await sha(key):key;const kp=new Uint8Array(64);kp.set(k);
+const ip=kp.map(b=>b^0x36),op=kp.map(b=>b^0x5c),inner=await sha(cat(ip,msg)),outer=hx(await sha(cat(op,inner)));
+const ck=await crypto.subtle.importKey('raw',key.length?key:new Uint8Array(1),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+const lib=hx(new Uint8Array(await crypto.subtle.sign('HMAC',ck,msg)));$('mI').textContent=hx(inner);$('mO').textContent=outer;
+$('mV').innerHTML=key.length?(outer==lib?'<span class="ok">Matches the browser’s built-in HMAC-SHA256.</span>':'<span class="no">Does not match the library.</span>'):'<span class="no">Enter a key.</span>';
+const lt=hx(new Uint8Array(await crypto.subtle.sign('HMAC',ck,enc.encode($('mR').value))));$('mT').innerHTML=lt==outer?'<span class="ok">Receiver’s recomputed tag matches: message accepted.</span>':'<span class="no">Tag mismatch: the message was changed, so it is rejected.</span>'}
+['mK','mM','mR'].forEach(i=>$(i).oninput=hm);hm();
+// signature (toy RSA)
+async function sg(){const h=async t=>parseInt(hx(await sha(enc.encode(t))).slice(0,6),16)%3233,a=await h($('gM').value),b=await h($('gR').value),s=mp(a,2753,3233),v=mp(s,17,3233);
+$('gO').innerHTML='<table><tr><th>Digest mod n</th><th>Signature s = h<sup>d</sup> mod n</th><th>Receiver digest</th><th>s<sup>e</sup> mod n</th></tr><tr><td>'+a+'</td><td style="background:var(--corbg)">'+s+'</td><td>'+b+'</td><td style="background:var(--tealbg)">'+v+'</td></tr></table><p>'+(v==b?'<span class="ok">Signature valid: digest matches.</span>':'<span class="no">Signature invalid: message differs from what was signed.</span>')+'</p>'}
+['gM','gR'].forEach(i=>$(i).oninput=sg);sg();
+// DSA toy
+function da(){const p=23,q=11,g=4,x=+$('dx').value,k=+$('dk').value,H=+$('dh').value,ok=(v,l,u)=>Number.isInteger(v)&&v>=l&&v<=u;
+if(!ok(x,1,10)||!ok(k,1,10)||!ok(H,0,10)){$('dO').innerHTML='<p class="no">x and k must be 1 to 10, H 0 to 10.</p>';return}
+const inv=a=>mp(a,q-2,q),y=mp(g,x,p),r=mp(g,k,p)%q,s=inv(k)*(H+x*r)%q;if(!r||!s){$('dO').innerHTML='<p class="no">r or s is 0. Choose another k.</p>';return}
+const w=inv(s),u1=H*w%q,u2=r*w%q,v=(mp(g,u1,p)*mp(y,u2,p)%p)%q;
+$('dO').innerHTML='<table><tr><th>Public y</th><th>r</th><th>s</th><th>w</th><th>u1</th><th>u2</th><th>v</th></tr><tr><td>'+y+'</td><td style="background:var(--corbg)">'+r+'</td><td style="background:var(--corbg)">'+s+'</td><td>'+w+'</td><td>'+u1+'</td><td>'+u2+'</td><td style="background:var(--tealbg)">'+v+'</td></tr></table><p>'+(v==r?'<span class="ok">v = r: signature valid.</span>':'<span class="no">v ≠ r</span>')+'</p>'}
+['dx','dk','dh'].forEach(i=>$(i).oninput=da);da();
+// Kerberos
+const KS=[['C','AS','Request TGT','C → AS: ID<sub>C</sub> ∥ ID<sub>tgs</sub> ∥ TS1. The client asks for a ticket-granting ticket.'],['AS','C','TGT + session key','AS → C: E(K<sub>C</sub>, [K<sub>c,tgs</sub> ∥ ID<sub>tgs</sub> ∥ TS2 ∥ Lifetime2 ∥ Ticket<sub>tgs</sub>]). Only the real user’s password-derived key K<sub>C</sub> opens this.'],['C','TGS','Request service ticket','C → TGS: ID<sub>V</sub> ∥ Ticket<sub>tgs</sub> ∥ Authenticator<sub>c</sub>. The authenticator (ID, address, timestamp) proves the ticket is not stolen.'],['TGS','C','Service ticket','TGS → C: E(K<sub>c,tgs</sub>, [K<sub>c,v</sub> ∥ ID<sub>V</sub> ∥ TS4 ∥ Ticket<sub>v</sub>]).'],['C','V','Present ticket','C → V: Ticket<sub>v</sub> ∥ Authenticator<sub>c</sub>. The server decrypts the ticket with its own key K<sub>v</sub>.'],['V','C','Mutual authentication','V → C: E(K<sub>c,v</sub>, [TS5 + 1]). Proves the server is genuine.']];
+const X={C:60,AS:220,TGS:380,V:540};
+function kb(i){let s='<defs><marker id="k" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="context-stroke"/></marker></defs>';
+const nm={C:['Client','#0b9aa0'],AS:['AS','#6a57e0'],TGS:['TGS','#e8446b'],V:['Server','#f2a900']};for(const k in X)s+='<rect x="'+(X[k]-45)+'" y="5" width="90" height="34" rx="8" fill="'+nm[k][1]+'"/><text x="'+X[k]+'" y="27" text-anchor="middle" font-weight="700" style="fill:'+(k=='V'?'#1c1f3a':'#fff')+'">'+nm[k][0]+'</text><line x1="'+X[k]+'" y1="39" x2="'+X[k]+'" y2="325" stroke="#aab" stroke-dasharray="4 4"/>';
+KS.forEach((m,j)=>{const y=70+j*48,on=i==j,c=on?'#e8446b':'#8a8fb0';s+='<line x1="'+X[m[0]]+'" y1="'+y+'" x2="'+X[m[1]]+'" y2="'+y+'" stroke="'+c+'" stroke-width="'+(on?4:2)+'" marker-end="url(#k)"/><text x="'+(X[m[0]]+X[m[1]])/2+'" y="'+(y-7)+'" text-anchor="middle" font-size="13" font-weight="'+(on?700:400)+'">'+(j+1)+'. '+m[2]+'</text>'});
+$('kSvg').innerHTML=s;$('kTxt').innerHTML=KS[i][3];[...$('kSvg').parentNode.querySelectorAll('button')].forEach((b,j)=>b.classList.toggle('on',i==j))}
+KS.forEach((m,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'. '+m[2];b.style.margin='2px';b.onclick=()=>kb(i);$('kSvg').parentNode.insertBefore(b,$('kSvg'))});kb(0);
+// X.509
+const XF=[['Version','v3','Version 3 adds extensions such as key usage and alternative names.'],['Serial number','4A:1F:…','Unique per CA; used to identify the certificate in a revocation list.'],['Signature algorithm','sha256WithRSA','How the CA signed this certificate.'],['Issuer','CN=Example CA','The CA that signed it.'],['Validity','2026-01-01 to 2027-01-01','Not-before and not-after dates.'],['Subject','CN=www.example.com','The owner the key belongs to.'],['Subject public key','RSA 2048-bit','The key being certified.'],['Extensions','SAN, key usage, CRL URL','Extra constraints and where to check revocation.'],['CA signature','3F:A9:…','The CA’s signature over all fields above; verified with the CA’s public key.']];
+$('xF').innerHTML=XF.map((f,i)=>'<button data-i="'+i+'" style="margin:3px;background:var(--'+['viobg','tealbg','corbg','ambbg'][i%4]+')">'+f[0]+': '+f[1]+'</button>').join('');
+$('xF').onclick=e=>{const b=e.target.closest('button');if(b)$('xT').textContent=XF[+b.dataset.i][2]};$('xT').textContent='Pick a field to see what it does.';
+// quiz
+const Q=[['Which property stops finding any two inputs with one hash?',['Preimage resistance','Collision resistance','Diffusion'],1,'That is collision resistance.'],['Why is HMAC nested?',['To go faster','To stop length-extension attacks','To avoid keys'],1,'H(K∥M) is open to length extension.'],['What does a digital signature give that a MAC does not?',['Integrity','Nonrepudiation','Speed'],1,'Both parties share a MAC key, so either could forge it.'],['In Kerberos, what does the TGT let a client do?',['Skip passwords forever','Get service tickets without retyping the password','Sign certificates'],1,'The TGS issues service tickets against it.'],['What signs an X.509 certificate?',['The subject','The CA','The relying party'],1,'The CA’s signature binds name and key.']];
+$('quiz').innerHTML=Q.map((q,i)=>'<p><b>'+(i+1)+'. '+q[0]+'</b></p><div class="row">'+q[1].map((o,j)=>'<button data-q="'+i+'" data-j="'+j+'">'+o+'</button>').join('')+'</div><p id="qr'+i+'"></p>').join('');
+$('quiz').onclick=e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.q,ok=+b.dataset.j==Q[i][2];$('qr'+i).innerHTML=ok?'<span class="ok">Correct. '+Q[i][3]+'</span>':'<span class="no">Not quite. '+Q[i][3]+'</span>'};
+</script></body></html>

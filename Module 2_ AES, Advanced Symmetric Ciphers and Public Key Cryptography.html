@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Module 2: AES, Advanced Symmetric Ciphers and Public Key Cryptography</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f7fc;--card:#fff;--ink:#1c1f3a;--mut:#555a7a;--line:#d9dcee;--teal:#0b9aa0;--coral:#e8446b;--amber:#f2a900;--vio:#6a57e0;--tealbg:#d9f3f3;--corbg:#fde1e8;--ambbg:#fff1c9;--viobg:#e5e1fc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12142a;--card:#1c1f3a;--ink:#eceefb;--mut:#a5a9cc;--line:#343862;--tealbg:#0d3b40;--corbg:#4a1e2c;--ambbg:#45380c;--viobg:#2b2760}}
+:root[data-theme="dark"]{--bg:#12142a;--card:#1c1f3a;--ink:#eceefb;--mut:#a5a9cc;--line:#343862;--tealbg:#0d3b40;--corbg:#4a1e2c;--ambbg:#45380c;--viobg:#2b2760}
+html{scroll-padding-top:calc(60px + env(safe-area-inset-top,0px));scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 'Source Serif 4',Georgia,serif}
+h1,h2,h3,nav{font-family:'Bricolage Grotesque',system-ui,sans-serif}
+header{background:linear-gradient(120deg,var(--teal),var(--vio));color:#fff;padding:48px 20px 40px}
+header div,main{max-width:860px;margin:auto}
+h1{font-size:clamp(30px,6vw,52px);line-height:1.1;margin:0 0 10px;font-weight:800}
+header p{margin:0;max-width:60ch}
+nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;gap:4px;overflow-x:auto;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top,0px))}
+nav a{white-space:nowrap;color:var(--ink);text-decoration:none;font-size:14px;padding:5px 11px;border-radius:99px;font-weight:600}
+nav a:hover{background:var(--viobg)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
+main{padding:10px 18px 60px}section{margin-top:44px}
+h2{font-size:30px;margin:0 0 6px;border-left:8px solid var(--teal);padding-left:12px}
+h3{font-size:20px;margin:26px 0 6px;color:var(--vio)}p{max-width:70ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;overflow-x:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.grid>div{border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.5}.grid b{font-family:'Bricolage Grotesque',sans-serif;display:block;font-size:17px}
+.t{background:var(--tealbg)}.c{background:var(--corbg)}.a{background:var(--ambbg)}.v{background:var(--viobg)}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font:600 13px 'Bricolage Grotesque',sans-serif;margin:2px}
+button,input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+button{cursor:pointer;font-weight:600}button:hover,button.on{background:var(--vio);color:#fff;border-color:var(--vio)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:15px;word-break:break-all}
+table{border-collapse:collapse;font-size:14px;font-family:'Bricolage Grotesque',sans-serif}td,th{border:1px solid var(--line);padding:5px 9px;text-align:center}th{background:var(--viobg)}
+.st td{width:46px;height:40px;font:700 16px ui-monospace,monospace;border-radius:6px}
+svg{max-width:100%;height:auto}svg text{font-family:'Bricolage Grotesque',sans-serif;fill:#1c1f3a}
+.bar{height:22px;border-radius:6px;color:#fff;font:600 13px 'Bricolage Grotesque',sans-serif;padding:0 8px;line-height:22px;margin:5px 0;white-space:nowrap}
+.chip{display:inline-block;margin:3px;padding:4px 9px;border-radius:8px;color:#fff;font:600 13px 'Bricolage Grotesque',sans-serif}
+.cell{display:inline-flex;width:44px;height:44px;align-items:center;justify-content:center;border-radius:6px;margin:2px;font:700 14px monospace;color:#fff}
+.ok{color:var(--teal);font-weight:600}.no{color:var(--coral);font-weight:600}
+</style></head><body>
+<header><div><h1>AES, Advanced Symmetric Ciphers and Public Key Cryptography</h1><p>Module 2 of Cryptography and Network Security (CCA42011). The AES round, RC4, RSA and Diffie-Hellman tools below run real calculations.</p></div></header>
+<nav><a href="#a1">AES intro</a><a href="#a2">Cipher</a><a href="#a3">Data structure</a><a href="#a4">Round</a><a href="#a5">3DES</a><a href="#a6">Modes</a><a href="#a7">RC4</a><a href="#a8">Public key</a><a href="#a9">RSA</a><a href="#a10">Key management</a><a href="#a11">Diffie-Hellman</a><a href="#a12">Quiz</a></nav>
+<main>
+
+<section id="a1"><h2>Introduction and evaluation criteria</h2>
+<p>DES was too small for modern attackers, and 3DES was slow. In 1997 NIST opened a public competition. Rijndael, designed by Joan Daemen and Vincent Rijmen, won and became AES in 2001 (FIPS 197). Candidates were judged on three groups of criteria.</p>
+<div class="grid"><div class="v"><b>Security</b>Resistance to cryptanalysis, soundness of the maths, randomness of output.</div><div class="t"><b>Cost</b>Speed in hardware and software, memory needs, royalty-free licence.</div><div class="a"><b>Algorithm and implementation</b>Flexibility across key sizes, simplicity, suitability for smart cards to servers.</div></div>
+<div class="box"><table><tr><th></th><th>DES</th><th>AES</th></tr><tr><td>Structure</td><td>Feistel</td><td>Substitution-permutation</td></tr><tr><td>Block</td><td>64 bits</td><td>128 bits</td></tr><tr><td>Key</td><td>56 bits</td><td>128, 192, 256 bits</td></tr><tr><td>Rounds</td><td>16</td><td>10, 12, 14</td></tr></table></div></section>
+
+<section id="a2"><h2>AES cipher: encryption and decryption</h2>
+<p>AES processes a 128-bit block in rounds. The key size decides the number of rounds. Choose a key size to see the schedule. The last round skips MixColumns. Decryption applies the inverse operations in reverse order, with the round keys also reversed.</p>
+<div class="box"><div class="row" id="kBtns"></div><p id="kInfo"></p><div id="kChain"></div></div></section>
+
+<section id="a3"><h2>AES data structure</h2>
+<p>The 16 bytes of a block fill a 4×4 <b>state</b> matrix column by column, so byte i goes to row i mod 4, column ⌊i/4⌋. The key is expanded into 4(Nr+1) 32-bit words, giving one 128-bit round key per round plus one extra. Type 16 characters to see them placed.</p>
+<div class="box"><div class="row"><input id="dIn" value="ADVANCEDSTANDARD" maxlength="16" size="20" aria-label="Up to 16 characters"></div><div id="dOut"></div></div></section>
+
+<section id="a4"><h2>AES encryption round</h2>
+<p>Each round has four stages. <b>SubBytes</b> replaces every byte through the S-box (confusion). <b>ShiftRows</b> rotates row r left by r bytes. <b>MixColumns</b> multiplies each column by a fixed matrix over GF(2<sup>8</sup>), which with ShiftRows gives diffusion. <b>AddRoundKey</b> XORs the state with the round key. The default values are the first round of the FIPS-197 worked example. Click a stage; yellow bytes changed from the previous stage.</p>
+<div class="box"><div class="row"><label>State (32 hex) <input id="sIn" size="36" class="mono" value="193DE3BEA0F4E22B9AC68D2AE9F84808"></label><label>Round key <input id="sKey" size="36" class="mono" value="A088232AFA54A36CFE2C397617B13905"></label></div>
+<div class="row" id="sBtns"></div><div id="sGrid"></div><p id="sNote"></p></div></section>
+
+<section id="a5"><h2>Multiple encryption and Triple DES</h2>
+<p>Double DES looks like 112 bits but the <b>meet-in-the-middle attack</b> encrypts forward under every K1 and decrypts backward under every K2, then matches the middle value. This costs about 2<sup>57</sup> work, not 2<sup>112</sup>. Triple DES uses encrypt-decrypt-encrypt: C = E(K3, D(K2, E(K1, P))). With K1 = K2 = K3 it behaves as single DES, which keeps old systems compatible. It is now deprecated in favour of AES.</p>
+<div class="box"><svg viewBox="0 0 640 100" role="img" aria-label="Triple DES EDE"><g font-weight="700" font-size="14" text-anchor="middle" style="fill:#fff"><rect x="5" y="30" width="80" height="40" rx="8" fill="#0b9aa0"/><text x="45" y="55" style="fill:#fff">P</text><rect x="125" y="30" width="110" height="40" rx="8" fill="#6a57e0"/><text x="180" y="55" style="fill:#fff">E (K1)</text><rect x="275" y="30" width="110" height="40" rx="8" fill="#e8446b"/><text x="330" y="55" style="fill:#fff">D (K2)</text><rect x="425" y="30" width="110" height="40" rx="8" fill="#6a57e0"/><text x="480" y="55" style="fill:#fff">E (K3)</text><rect x="565" y="30" width="70" height="40" rx="8" fill="#0b9aa0"/><text x="600" y="55" style="fill:#fff">C</text></g><path d="M85 50h40M235 50h40M385 50h40M535 50h30" stroke="#555a7a" stroke-width="3"/></svg>
+<div class="bar" style="width:34%;background:var(--coral)">DES 56</div><div class="bar" style="width:34%;background:var(--amber)">Double DES 57 effective</div><div class="bar" style="width:67%;background:var(--vio)">3DES two keys 112</div><div class="bar" style="width:100%;background:var(--teal)">3DES three keys 168 (about 112 effective)</div></div></section>
+
+<section id="a6"><h2>Block cipher modes of operation</h2>
+<p>Modes turn a block cipher into a tool for long messages. Plaintext below has repeated blocks (value 40). Pick a mode and see whether the repetition survives.</p>
+<div class="box"><div class="row" id="mBtns"></div><p>Plaintext</p><div id="mP"></div><p>Ciphertext</p><div id="mC"></div><p id="mTxt"></p>
+<table><tr><th>Mode</th><th>Needs IV or counter</th><th>Padding</th><th>Parallel encryption</th></tr><tr><td>ECB</td><td>No</td><td>Yes</td><td>Yes</td></tr><tr><td>CBC</td><td>IV</td><td>Yes</td><td>No</td></tr><tr><td>CFB</td><td>IV</td><td>No</td><td>No</td></tr><tr><td>OFB</td><td>IV</td><td>No</td><td>No (keystream can be precomputed)</td></tr><tr><td>CTR</td><td>Counter</td><td>No</td><td>Yes</td></tr></table></div></section>
+
+<section id="a7"><h2>Stream ciphers and RC4</h2>
+<p>A stream cipher XORs the data with a pseudo-random keystream, bit by bit or byte by byte. Never reuse a keystream: XORing two ciphertexts then cancels the key and leaves P1 XOR P2. RC4 keeps a 256-byte array S. The key-scheduling step (KSA) permutes S using the key. The generation step (PRGA) swaps two entries per output byte. RC4 has known biases and is banned in TLS, but it is the classic teaching example. Default input is the standard test vector (key “Key”, text “Plaintext”, output BBF316E8D940AF0AD3).</p>
+<div class="box"><div class="row"><input id="rKey" value="Key" aria-label="Key" size="10"><input id="rTxt" value="Plaintext" aria-label="Plaintext" size="20"></div>
+<p>S after KSA (first 16 entries):</p><div id="rS"></div><p>Ciphertext (hex): <b class="mono" id="rOut"></b></p></div></section>
+
+<section id="a8"><h2>Principles of public key cryptosystems</h2>
+<p>Each user has a public key to share and a private key to keep. What one key does, only the other undoes. This solves key distribution but is slow, so it is used for key exchange and signatures while symmetric ciphers carry the data. Security depends on a one-way trapdoor function, such as factoring the product of two large primes. Switch the use below.</p>
+<div class="box"><div class="row" id="pkBtns"></div><svg id="pkSvg" viewBox="0 0 640 150" role="img" aria-label="Public key use"></svg><p id="pkTxt"></p></div></section>
+
+<section id="a9"><h2>The RSA algorithm</h2>
+<p>Choose primes p and q, then n = p·q and φ(n) = (p−1)(q−1). Pick e coprime to φ(n) and find d with e·d ≡ 1 (mod φ(n)). The public key is (e, n), the private key is (d, n). Encrypt C = M<sup>e</sup> mod n. Decrypt M = C<sup>d</sup> mod n. A signature reverses the keys: S = M<sup>d</sup> mod n, verified with S<sup>e</sup> mod n. Real keys use 2048 bits or more plus padding.</p>
+<div class="box"><div class="row"><label>p <input id="p" type="number" value="61" style="width:80px"></label><label>q <input id="q" type="number" value="53" style="width:80px"></label><label>e <input id="e" type="number" value="17" style="width:80px"></label><label>M <input id="m" type="number" value="65" style="width:90px"></label></div><div id="rsa"></div></div></section>
+
+<section id="a10"><h2>Key management</h2>
+<p>Public keys need distributing too, and the main risk is trusting a fake one. Four approaches:</p>
+<div class="grid"><div class="c"><b>Public announcement</b>Post the key openly. Simple, but anyone can forge a post.</div><div class="a"><b>Public directory</b>A trusted party keeps a register. The directory itself becomes a target.</div><div class="t"><b>Public-key authority</b>An authority answers key requests and signs replies. Every lookup needs the authority online.</div><div class="v"><b>Certificates</b>A CA signs a binding of name and public key (X.509). Users verify offline.</div></div>
+<h3>Distributing a secret key with public keys</h3>
+<div class="box"><span class="chip" style="background:var(--vio)">1 Alice picks a random session key Ks</span><span class="chip" style="background:var(--teal)">2 Encrypts Ks with Bob’s public key</span><span class="chip" style="background:var(--coral)">3 Bob decrypts with his private key</span><span class="chip" style="background:var(--amber);color:#1c1f3a">4 Both encrypt data with Ks (AES)</span></div></section>
+
+<section id="a11"><h2>Diffie-Hellman key exchange</h2>
+<p>Alice and Bob agree on a prime p and a generator g. Alice sends A = g<sup>a</sup> mod p and Bob sends B = g<sup>b</sup> mod p. Each computes the same secret g<sup>ab</sup> mod p. Eve sees p, g, A, B, but recovering a or b is the discrete logarithm problem. Plain DH does not authenticate, so Eve can sit in the middle with a separate key to each side, unless the exchange is signed.</p>
+<div class="box"><div class="row"><label>p <input id="dp" type="number" value="23" style="width:80px"></label><label>g <input id="dg" type="number" value="5" style="width:80px"></label><label>Alice a <input id="da" type="number" value="6" style="width:80px"></label><label>Bob b <input id="db" type="number" value="15" style="width:80px"></label></div><div id="dh"></div></div></section>
+
+<section id="a12"><h2>Check your understanding</h2><div class="box" id="quiz"></div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id),hx=(v,n=2)=>v.toString(16).toUpperCase().padStart(n,'0');
+const mp=(b,e,m)=>{b=BigInt(b);e=BigInt(e);m=BigInt(m);let r=1n;b%=m;while(e>0n){if(e&1n)r=r*b%m;b=b*b%m;e>>=1n}return r};
+const isP=n=>{if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i==0)return false;return true};
+// key sizes
+const K=[[128,4,10],[192,6,12],[256,8,14]];
+K.forEach((k,i)=>{const b=document.createElement('button');b.textContent='AES-'+k[0];b.onclick=()=>kz(i);$('kBtns').appendChild(b)});
+function kz(i){const[k,nk,nr]=K[i];[...$('kBtns').children].forEach((b,j)=>b.classList.toggle('on',i==j));
+$('kInfo').innerHTML='Key <b>'+k+'</b> bits ('+nk+' words), <b>'+nr+'</b> rounds, '+4*(nr+1)+' expanded key words, '+(nr+1)+' round keys.';
+let h='<span class="chip" style="background:var(--mut)">Round 0: AddRoundKey</span><br>';for(let r=1;r<nr;r++)h+='<span class="chip" style="background:var(--vio)">Round '+r+': Sub · Shift · Mix · Key</span>';
+$('kChain').innerHTML=h+'<br><span class="chip" style="background:var(--coral)">Round '+nr+': Sub · Shift · Key (no Mix)</span>'}kz(0);
+// data structure
+function ds(){const t=$('dIn').value.padEnd(16,'·').slice(0,16);let h='<table class="st">';for(let r=0;r<4;r++){h+='<tr>';for(let c=0;c<4;c++){const i=r+4*c;h+='<td style="background:'+['var(--viobg)','var(--tealbg)','var(--corbg)','var(--ambbg)'][c]+'" title="byte '+i+'">'+t[i]+'<br><small>'+(t.charCodeAt(i)<256?hx(t.charCodeAt(i)):'')+'</small></td>'}h+='</tr>'}$('dOut').innerHTML=h+'</table><p>Cell shows character and hex. Colours mark the four columns (words) of the state.</p>'}
+$('dIn').oninput=ds;ds();
+// AES round
+const rot=(x,n)=>((x<<n)|(x>>(8-n)))&255,SB=(()=>{const s=[];let p=1,q=1;do{p=(p^(p<<1)^(p&128?27:0))&255;q^=q<<1;q^=q<<2;q^=q<<4;q&=255;if(q&128)q^=9;s[p]=(q^rot(q,1)^rot(q,2)^rot(q,3)^rot(q,4)^99)&255}while(p!=1);s[0]=99;return s})();
+const xt=a=>((a<<1)^(a&128?27:0))&255,m3=a=>xt(a)^a;
+const names=['Input','After SubBytes','After ShiftRows','After MixColumns','After AddRoundKey'];
+names.forEach((n,i)=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>show(i);$('sBtns').appendChild(b)});
+let ST=[];
+function parse(s){s=s.replace(/\s/g,'');return s.length==32&&/^[0-9a-f]+$/i.test(s)?s.match(/../g).map(x=>parseInt(x,16)):null}
+function run(){const a=parse($('sIn').value),k=parse($('sKey').value);if(!a||!k){$('sNote').innerHTML='<span class="no">Enter exactly 32 hex digits in both fields.</span>';return}
+const g=b=>Array.from({length:4},(_,r)=>[0,1,2,3].map(c=>b[r+4*c]));const s0=g(a),kk=g(k);
+const s1=s0.map(r=>r.map(v=>SB[v])),s2=s1.map((r,i)=>r.map((_,c)=>r[(c+i)%4]));
+const s3=s2.map(r=>r.slice());for(let c=0;c<4;c++){const x=[0,1,2,3].map(r=>s2[r][c]);s3[0][c]=xt(x[0])^m3(x[1])^x[2]^x[3];s3[1][c]=x[0]^xt(x[1])^m3(x[2])^x[3];s3[2][c]=x[0]^x[1]^xt(x[2])^m3(x[3]);s3[3][c]=m3(x[0])^x[1]^x[2]^xt(x[3])}
+const s4=s3.map((r,i)=>r.map((v,c)=>v^kk[i][c]));ST=[s0,s1,s2,s3,s4];show(window.cur||0)}
+const note=['Starting state, filled column by column.','Each byte replaced through the S-box.','Row 1 rotated left 1, row 2 by 2, row 3 by 3.','Each column mixed with the GF(2^8) matrix.','State XOR round key: this is the output of the round.'];
+function show(i){window.cur=i;if(!ST.length)return;[...$('sBtns').children].forEach((b,j)=>b.classList.toggle('on',i==j));
+let h='<table class="st">';for(let r=0;r<4;r++){h+='<tr>';for(let c=0;c<4;c++){const ch=i>0&&ST[i][r][c]!=ST[i-1][r][c];h+='<td style="background:'+(ch?'var(--ambbg)':'var(--viobg)')+'">'+hx(ST[i][r][c])+'</td>'}h+='</tr>'}$('sGrid').innerHTML=h+'</table>';$('sNote').textContent=note[i]}
+['sIn','sKey'].forEach(i=>$(i).oninput=run);run();
+// modes
+const P=[40,40,90,40,40,200,40,40],E=x=>(x*7+3)*13%256,hue=v=>'hsl('+Math.round(v*360/256)+',70%,45%)';
+const MD=[['ECB','Equal plaintext blocks give equal ciphertext blocks, so patterns leak.'],['CBC','Each block is XORed with the previous ciphertext first, so repeats vanish. Decryption can run in parallel.'],['CFB','Encrypts the previous ciphertext block and XORs it with the plaintext. Acts as a stream cipher; no padding.'],['OFB','Encrypts the cipher output repeatedly to make a keystream. A bit error stays one bit, but IV reuse is fatal.'],['CTR','Encrypts a counter to make the keystream. Parallel, random access, never reuse a counter.']];
+MD.forEach((m,i)=>{const b=document.createElement('button');b.textContent=m[0];b.onclick=()=>md(i);$('mBtns').appendChild(b)});
+function md(i){[...$('mBtns').children].forEach((b,j)=>b.classList.toggle('on',i==j));let prev=77,o=77;const C=P.map((p,j)=>i==0?E(p):i==1?(prev=E(p^prev)):i==2?(prev=p^E(prev)):i==3?(o=E(o),p^o):(p^E(j+1)));
+const sw=a=>a.map(v=>'<span class="cell" style="background:'+hue(v)+'">'+v+'</span>').join('');$('mP').innerHTML=sw(P);$('mC').innerHTML=sw(C);$('mTxt').textContent=MD[i][1]}md(0);
+// RC4
+function rc4(){const k=[...$('rKey').value].map(c=>c.charCodeAt(0)&255);if(!k.length)return;const S=[...Array(256).keys()];let j=0;for(let i=0;i<256;i++){j=(j+S[i]+k[i%k.length])%256;[S[i],S[j]]=[S[j],S[i]]}
+$('rS').innerHTML=S.slice(0,16).map(v=>'<span class="cell" style="background:var(--vio);width:36px;height:36px;font-size:12px">'+hx(v)+'</span>').join('');
+let a=0,b=0,o='';for(const ch of $('rTxt').value){a=(a+1)%256;b=(b+S[a])%256;[S[a],S[b]]=[S[b],S[a]];o+=hx((ch.charCodeAt(0)&255)^S[(S[a]+S[b])%256])}$('rOut').textContent=o}
+['rKey','rTxt'].forEach(i=>$(i).oninput=rc4);rc4();
+// public key use
+const U=[['Confidentiality','Encrypt with Bob’s public key','Decrypt with Bob’s private key','Only Bob can read it.'],['Authentication (signature)','Encrypt with Alice’s private key','Decrypt with Alice’s public key','Anyone can verify it came from Alice. In practice she signs a hash of the message.']];
+U.forEach((u,i)=>{const b=document.createElement('button');b.textContent=u[0];b.onclick=()=>pk(i);$('pkBtns').appendChild(b)});
+function pk(i){const u=U[i];[...$('pkBtns').children].forEach((b,j)=>b.classList.toggle('on',i==j));
+$('pkSvg').innerHTML='<g font-weight="700" text-anchor="middle" font-size="13"><rect x="5" y="45" width="90" height="50" rx="10" fill="#0b9aa0"/><text x="50" y="75" style="fill:#fff">Alice</text><rect x="545" y="45" width="90" height="50" rx="10" fill="#0b9aa0"/><text x="590" y="75" style="fill:#fff">Bob</text><rect x="125" y="40" width="170" height="60" rx="10" fill="#6a57e0"/><text x="210" y="75" style="fill:#fff">'+u[1]+'</text><rect x="345" y="40" width="170" height="60" rx="10" fill="#e8446b"/><text x="430" y="75" style="fill:#fff">'+u[2]+'</text></g><path d="M95 70h30M295 70h50M515 70h30" stroke="#555a7a" stroke-width="3"/>';$('pkTxt').textContent=u[3]}pk(0);
+// RSA
+function rsa(){const p=+$('p').value,q=+$('q').value,e=BigInt(+$('e').value),m=BigInt(+$('m').value);let o='';
+if(!isP(p)||!isP(q)||p==q){$('rsa').innerHTML='<p class="no">p and q must be two different primes.</p>';return}
+const n=p*q,ph=(p-1)*(q-1);const gcd=(a,b)=>b?gcd(b,a%b):a;if(e<2n||gcd(Number(e),ph)!=1){$('rsa').innerHTML='<p class="no">e must be between 2 and φ(n) and share no factor with φ(n)='+ph+'.</p>';return}
+let d=0n;{let[a,b,x,y]=[BigInt(ph),e,0n,1n];while(b){const t=a/b;[a,b]=[b,a-t*b];[x,y]=[y,x-t*y]}d=((x%BigInt(ph))+BigInt(ph))%BigInt(ph)}
+if(m<0n||m>=BigInt(n)){$('rsa').innerHTML='<p class="no">M must be smaller than n = '+n+'.</p>';return}
+const c=mp(m,e,n),back=mp(c,d,n),s=mp(m,d,n),v=mp(s,e,n);
+$('rsa').innerHTML='<table><tr><th>n = p·q</th><th>φ(n)</th><th>Public key</th><th>Private key d</th></tr><tr><td>'+n+'</td><td>'+ph+'</td><td style="background:var(--tealbg)">('+e+', '+n+')</td><td style="background:var(--corbg)">'+d+'</td></tr></table><p>Encrypt: <b class="mono">'+m+'<sup>'+e+'</sup> mod '+n+' = '+c+'</b><br>Decrypt: <b class="mono">'+c+'<sup>'+d+'</sup> mod '+n+' = '+back+'</b> '+(back==m?'<span class="ok">recovered</span>':'')+'<br>Sign: <b class="mono">S = '+s+'</b>, verify: <b class="mono">'+v+'</b> '+(v==m?'<span class="ok">valid</span>':'<span class="no">invalid</span>')+'</p>'}
+['p','q','e','m'].forEach(i=>$(i).oninput=rsa);rsa();
+// DH
+function dh(){const p=+$('dp').value,g=+$('dg').value,a=+$('da').value,b=+$('db').value;if(!isP(p)||g<2||g>=p||a<1||b<1){$('dh').innerHTML='<p class="no">Use a prime p, 2 ≤ g &lt; p, and positive secrets.</p>';return}
+const A=mp(g,a,p),B=mp(g,b,p),k1=mp(B,a,p),k2=mp(A,b,p);
+$('dh').innerHTML='<table><tr><th>Alice</th><th>Public</th><th>Bob</th></tr><tr><td style="background:var(--tealbg)">a = '+a+'<br>A = '+g+'<sup>'+a+'</sup> mod '+p+' = <b>'+A+'</b></td><td style="background:var(--ambbg)">p = '+p+', g = '+g+'<br>sends A='+A+' and B='+B+'</td><td style="background:var(--viobg)">b = '+b+'<br>B = '+g+'<sup>'+b+'</sup> mod '+p+' = <b>'+B+'</b></td></tr><tr><td>'+B+'<sup>'+a+'</sup> mod '+p+' = <b>'+k1+'</b></td><td>'+(k1==k2?'<span class="ok">same shared key</span>':'<span class="no">keys differ</span>')+'</td><td>'+A+'<sup>'+b+'</sup> mod '+p+' = <b>'+k2+'</b></td></tr></table>'}
+['dp','dg','da','db'].forEach(i=>$(i).oninput=dh);dh();
+// quiz
+const Q=[['How many rounds does AES-256 use?',['10','12','14'],2,'128, 192 and 256-bit keys use 10, 12 and 14 rounds.'],['Which AES stage is skipped in the last round?',['SubBytes','MixColumns','AddRoundKey'],1,'The final round has no MixColumns.'],['Why is Double DES weaker than expected?',['Meet-in-the-middle attack','Short block size','No S-boxes'],0,'It costs about 2^57 work.'],['In RSA, which key signs a message?',['Sender’s private key','Receiver’s public key','Shared session key'],0,'Signing uses the private key; anyone verifies with the public key.'],['What weakness does plain Diffie-Hellman have?',['Slow exponentiation','No authentication','Needs a shared secret first'],1,'It is open to a man-in-the-middle unless signed.']];
+$('quiz').innerHTML=Q.map((q,i)=>'<p><b>'+(i+1)+'. '+q[0]+'</b></p><div class="row">'+q[1].map((o,j)=>'<button data-q="'+i+'" data-j="'+j+'">'+o+'</button>').join('')+'</div><p id="qr'+i+'"></p>').join('');
+$('quiz').onclick=e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.q,ok=+b.dataset.j==Q[i][2];$('qr'+i).innerHTML=ok?'<span class="ok">Correct. '+Q[i][3]+'</span>':'<span class="no">Not quite. '+Q[i][3]+'</span>'};
+</script></body></html>

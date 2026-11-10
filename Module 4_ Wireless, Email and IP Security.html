@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Module 4: Wireless, Email and IP Security</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f7fc;--card:#fff;--ink:#1c1f3a;--mut:#555a7a;--line:#d9dcee;--teal:#0b9aa0;--coral:#e8446b;--amber:#f2a900;--vio:#6a57e0;--tealbg:#d9f3f3;--corbg:#fde1e8;--ambbg:#fff1c9;--viobg:#e5e1fc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12142a;--card:#1c1f3a;--ink:#eceefb;--mut:#a5a9cc;--line:#343862;--tealbg:#0d3b40;--corbg:#4a1e2c;--ambbg:#45380c;--viobg:#2b2760}}
+:root[data-theme="dark"]{--bg:#12142a;--card:#1c1f3a;--ink:#eceefb;--mut:#a5a9cc;--line:#343862;--tealbg:#0d3b40;--corbg:#4a1e2c;--ambbg:#45380c;--viobg:#2b2760}
+html{scroll-padding-top:calc(60px + env(safe-area-inset-top,0px));scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 'Source Serif 4',Georgia,serif}
+h1,h2,h3,nav{font-family:'Bricolage Grotesque',system-ui,sans-serif}
+header{background:linear-gradient(120deg,var(--teal),var(--coral));color:#fff;padding:48px 20px 40px}
+header div,main{max-width:860px;margin:auto}
+h1{font-size:clamp(30px,6vw,52px);line-height:1.1;margin:0 0 10px;font-weight:800}header p{margin:0;max-width:60ch}
+nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;gap:4px;overflow-x:auto;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top,0px))}
+nav a{white-space:nowrap;color:var(--ink);text-decoration:none;font-size:14px;padding:5px 11px;border-radius:99px;font-weight:600}nav a:hover{background:var(--viobg)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
+main{padding:10px 18px 60px}section{margin-top:44px}
+h2{font-size:30px;margin:0 0 6px;border-left:8px solid var(--amber);padding-left:12px}
+h3{font-size:20px;margin:26px 0 6px;color:var(--vio)}p{max-width:70ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;overflow-x:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:12px 0}
+.grid>div{border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.5}.grid b{font-family:'Bricolage Grotesque',sans-serif;display:block;font-size:17px}
+.t{background:var(--tealbg)}.c{background:var(--corbg)}.a{background:var(--ambbg)}.v{background:var(--viobg)}
+button,input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+button{cursor:pointer;font-weight:600}button:hover,button.on{background:var(--vio);color:#fff;border-color:var(--vio)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.mono,pre{font-family:ui-monospace,Menlo,monospace;font-size:13.5px;word-break:break-all}pre{white-space:pre-wrap;margin:8px 0;background:var(--viobg);padding:10px;border-radius:8px}
+table{border-collapse:collapse;font-size:14px;font-family:'Bricolage Grotesque',sans-serif}td,th{border:1px solid var(--line);padding:5px 9px;text-align:center}th{background:var(--viobg)}
+svg{max-width:100%;height:auto}svg text{font-family:'Bricolage Grotesque',sans-serif;fill:#1c1f3a}
+.chip{display:inline-block;margin:3px;padding:4px 10px;border-radius:8px;color:#fff;font:600 13px 'Bricolage Grotesque',sans-serif}
+.chip i{font-style:normal;font-size:11px;background:#fff;color:#1c1f3a;border-radius:4px;padding:0 4px;margin-left:5px}
+.ok{color:var(--teal);font-weight:600}.no{color:var(--coral);font-weight:600}
+.cell{display:inline-flex;width:40px;height:40px;align-items:center;justify-content:center;border-radius:6px;margin:2px;font:700 14px monospace;color:#fff}
+</style></head><body>
+<header><div><h1>Wireless, Email and IP Security</h1><p>Module 4 of Cryptography and Network Security (CCA42011). The handshake, MIME, DANE, SPF, DKIM and IPsec tools below run real logic in your browser.</p></div></header>
+<nav><a href="#d1">Wireless</a><a href="#d2">Mobile</a><a href="#d3">802.11i</a><a href="#d4">Mail</a><a href="#d5">Threats</a><a href="#d6">S/MIME, PGP</a><a href="#d7">DNSSEC</a><a href="#d8">DANE</a><a href="#d9">SPF</a><a href="#d10">DKIM</a><a href="#d11">IPsec</a><a href="#d12">AH and ESP</a><a href="#d13">SAs</a><a href="#d14">IKE</a><a href="#d15">Quiz</a></nav>
+<main>
+
+<section id="d1"><h2>Wireless security</h2>
+<p>Wireless traffic travels through open air, so anyone in range can listen, and devices can join without plugging in. Wireless LANs, cellular links and mobile devices therefore need protection that wired networks get partly from physical access. Select a threat to see the defence.</p>
+<div class="box"><div class="row" id="wB"></div><p id="wT"></p></div>
+<p>General countermeasures: strong link encryption (WPA2 or WPA3), mutual authentication through 802.1X, hiding nothing behind the SSID alone, signal-range control, wireless intrusion detection and VPNs on untrusted networks.</p></section>
+
+<section id="d2"><h2>Mobile device security</h2>
+<div class="grid"><div class="c"><b>Lack of physical security</b>Phones are lost or stolen. Use device encryption, PIN or biometrics and remote wipe.</div><div class="a"><b>Untrusted devices</b>BYOD devices vary in patch level. Enforce a minimum security baseline.</div><div class="v"><b>Untrusted networks</b>Public Wi-Fi allows eavesdropping and evil twins. Use VPN or TLS.</div><div class="t"><b>Untrusted content and apps</b>Malicious apps, QR codes and links. Use app vetting, sandboxing and allow lists.</div></div>
+<div class="box"><span class="chip" style="background:var(--vio)">Device security</span><span class="chip" style="background:var(--teal)">Traffic security (VPN, TLS)</span><span class="chip" style="background:var(--coral)">Barrier: firewall and gateway</span><span class="chip" style="background:var(--amber);color:#1c1f3a">MDM policy and remote wipe</span></div></section>
+
+<section id="d3"><h2>IEEE 802.11i wireless LAN security</h2>
+<p>WEP used RC4 with a 24-bit IV and was broken in minutes. WPA was a stopgap with TKIP. 802.11i (WPA2) uses AES-based CCMP. WPA3 replaces the pre-shared key exchange with SAE, which resists offline guessing.</p>
+<div class="box"><table><tr><th>Standard</th><th>Cipher</th><th>Integrity</th><th>Status</th></tr><tr><td>WEP</td><td>RC4</td><td>CRC-32</td><td style="background:var(--corbg)">Broken</td></tr><tr><td>WPA</td><td>RC4 (TKIP)</td><td>Michael MIC</td><td style="background:var(--ambbg)">Legacy</td></tr><tr><td>WPA2 (802.11i)</td><td>AES-CCMP</td><td>CBC-MAC</td><td style="background:var(--tealbg)">Widely used</td></tr><tr><td>WPA3</td><td>AES-CCMP / GCMP</td><td>MIC</td><td style="background:var(--tealbg)">Current, uses SAE</td></tr></table></div>
+<p>802.11i has five phases. Select one to see the messages between the station (STA), access point (AP) and authentication server (AS).</p>
+<div class="box"><div class="row" id="pB"></div><svg id="pS" viewBox="0 0 640 240" role="img" aria-label="802.11i message flow"></svg><p id="pT"></p></div></section>
+
+<section id="d4"><h2>Internet mail architecture and email formats</h2>
+<p>A message leaves the author’s Mail User Agent (MUA), goes to a Mail Submission Agent (MSA), is relayed by Message Transfer Agents (MTAs) using SMTP, reaches a Mail Delivery Agent (MDA) and lands in a message store that the recipient reads through IMAP or POP3. Select a component.</p>
+<div class="box"><div class="row" id="eB"></div><p id="eT"></p></div>
+<p>A message follows RFC 5322: header lines, a blank line, then the body in 7-bit ASCII. MIME adds headers that describe other content (images, attachments, non-ASCII text) and encodes it, usually in base64. Edit the fields to see the raw message.</p>
+<div class="box"><div class="row"><input id="fF" value="alice@example.com" aria-label="From" size="18"><input id="fT" value="bob@example.org" aria-label="To" size="18"><input id="fS" value="Lab report" aria-label="Subject" size="14"></div><div class="row"><input id="fB" value="Hi Bob, the report is attached." aria-label="Body" size="34"><label><input type="checkbox" id="fA" checked> attach notes.txt</label></div><pre id="fO"></pre></div></section>
+
+<section id="d5"><h2>Email threats and comprehensive email security</h2>
+<div class="grid"><div class="c"><b>Authenticity threats</b>Spoofed sender, phishing, business email compromise.</div><div class="a"><b>Integrity threats</b>Content changed in transit or by a relay.</div><div class="v"><b>Confidentiality threats</b>Mail read at relays or on disk.</div><div class="t"><b>Availability threats</b>Spam floods, malware attachments, mailbox bombing.</div></div>
+<p>No single control covers all of these, so email security is layered: <b>transport</b> (STARTTLS, DANE), <b>message</b> (S/MIME or PGP), <b>domain</b> (SPF, DKIM, DMARC) and <b>content</b> (spam and malware filters). DMARC ties SPF and DKIM to the visible From domain and tells receivers to reject, quarantine or accept failures.</p></section>
+
+<section id="d6"><h2>S/MIME and Pretty Good Privacy</h2>
+<p>Both give authentication, integrity and confidentiality at message level. S/MIME uses X.509 certificates from CAs and CMS data types. PGP uses OpenPGP keys and a web of trust where users sign each other’s keys. Choose a format and services to see the processing steps for the sender.</p>
+<div class="box"><div class="row"><select id="sF" aria-label="Format"><option>PGP</option><option>S/MIME</option></select><label><input type="checkbox" id="sSg" checked> Sign</label><label><input type="checkbox" id="sEn" checked> Encrypt</label></div><div id="sO"></div><p id="sN"></p></div></section>
+
+<section id="d7"><h2>DNSSEC</h2>
+<p>DNSSEC signs DNS data so a resolver can prove an answer is genuine and unmodified. It does not hide data. Trust flows from the root down: each parent holds a <b>DS</b> record, which is a hash of the child’s key, so a validator starting from the known root key can verify every zone below it.</p>
+<div class="box"><span class="chip" style="background:var(--coral)">Root: DNSKEY (trust anchor)</span> → DS →<span class="chip" style="background:var(--amber);color:#1c1f3a">.com: DNSKEY</span> → DS →<span class="chip" style="background:var(--teal)">example.com: DNSKEY</span> → signs →<span class="chip" style="background:var(--vio)">A record + RRSIG</span></div>
+<div class="grid"><div class="v"><b>RRSIG</b>Signature over a set of records.</div><div class="t"><b>DNSKEY</b>Zone’s public key.</div><div class="a"><b>DS</b>Hash of a child zone key stored in the parent.</div><div class="c"><b>NSEC / NSEC3</b>Signed proof that a name does not exist.</div></div></section>
+
+<section id="d8"><h2>DNS-Based Authentication of Named Entities (DANE)</h2>
+<p>DANE publishes a <b>TLSA</b> record, protected by DNSSEC, that pins the server’s certificate or key to its name. A client checks the presented certificate against it instead of trusting every public CA. For SMTP it also stops STARTTLS downgrade. The record has certificate usage, selector (certificate or public key) and matching type (exact, SHA-256 or SHA-512). Paste any text as a stand-in for the certificate.</p>
+<div class="box"><div class="row"><label>Usage <select id="tU"><option value="3">3 DANE-EE</option><option value="2">2 DANE-TA</option><option value="1">1 PKIX-EE</option><option value="0">0 PKIX-TA</option></select></label><label>Matching <select id="tM"><option value="1">1 SHA-256</option><option value="2">2 SHA-512</option><option value="0">0 exact</option></select></label></div>
+<div class="row"><label>Published certificate <input id="tC" value="MIIB-demo-cert-example.com" size="26"></label><label>Server presents <input id="tP" value="MIIB-demo-cert-example.com" size="26"></label></div><pre id="tO"></pre><p id="tR"></p></div></section>
+
+<section id="d9"><h2>Sender Policy Framework (SPF)</h2>
+<p>A domain lists the IP addresses allowed to send its mail in a TXT record. The receiver checks the connecting IP against the record, evaluating mechanisms left to right, and the first match decides. Qualifiers: + pass, − fail, ~ softfail, ? neutral. SPF checks the envelope sender and breaks on forwarding. This checker handles ip4 and all; include, a and mx need DNS and are skipped.</p>
+<div class="box"><div class="row"><input id="pR" value="v=spf1 ip4:203.0.113.0/24 ip4:198.51.100.7 include:_spf.example.net ~all" size="58" aria-label="SPF record"></div><div class="row"><label>Connecting IP <input id="pI" value="203.0.113.25" size="16"></label></div><div id="pO"></div></div></section>
+
+<section id="d10"><h2>DomainKeys Identified Mail (DKIM)</h2>
+<p>The sending server hashes the body (bh=), then signs selected headers plus that hash with its private key. The public key sits in DNS at selector._domainkey.domain. A receiver recomputes the body hash and verifies the signature, proving the domain sent it and the signed parts are unchanged. This demo generates a real RSA key in your browser. Change the received copy to see it fail.</p>
+<div class="box"><div class="row"><label>Subject <input id="kS" value="Invoice 1042" size="16"></label><label>Body <input id="kB" value="Please pay 5000 by Friday." size="28"></label></div>
+<div class="row"><label>Received subject <input id="kRS" value="Invoice 1042" size="16"></label><label>Received body <input id="kRB" value="Please pay 5000 by Friday." size="28"></label></div><pre id="kO"></pre><p id="kR"></p></div></section>
+
+<section id="d11"><h2>IP security (IPsec) overview and architecture</h2>
+<p>IPsec secures traffic at the network layer, below TCP and UDP, so applications need no changes. It gives access control, connectionless integrity, data origin authentication, replay rejection and confidentiality. Typical uses are VPNs between sites, remote-user access and securing routing.</p>
+<div class="grid"><div class="v"><b>AH</b>Authentication Header: integrity and authentication, no encryption.</div><div class="t"><b>ESP</b>Encapsulating Security Payload: encryption, plus optional authentication.</div><div class="a"><b>IKE</b>Internet Key Exchange: negotiates keys and SAs.</div><div class="c"><b>SPD and SAD</b>Policy database says what to protect; SA database holds the live keys.</div></div>
+<div class="box"><table><tr><th>Service</th><th>AH</th><th>ESP (encrypt only)</th><th>ESP (encrypt + auth)</th></tr><tr><td>Access control</td><td>●</td><td>●</td><td>●</td></tr><tr><td>Connectionless integrity</td><td>●</td><td></td><td>●</td></tr><tr><td>Data origin authentication</td><td>●</td><td></td><td>●</td></tr><tr><td>Replay rejection</td><td>●</td><td>●</td><td>●</td></tr><tr><td>Confidentiality</td><td></td><td>●</td><td>●</td></tr><tr><td>Limited traffic-flow confidentiality</td><td></td><td>●</td><td>●</td></tr></table></div></section>
+
+<section id="d12"><h2>Authentication Header and Encapsulating Security Payload</h2>
+<p><b>Transport mode</b> protects the payload and keeps the original IP header, so it suits host-to-host. <b>Tunnel mode</b> wraps the whole original packet in a new IP header, so it suits gateways and VPNs. AH authenticates almost the whole packet, including parts of the IP header (but not fields that change in transit). ESP does not cover the outer IP header. Choose a combination.</p>
+<div class="box"><div class="row"><select id="xP" aria-label="Protocol"><option>AH</option><option>ESP</option></select><select id="xM" aria-label="Mode"><option>Transport</option><option>Tunnel</option></select></div><div id="xO"></div><p id="xN"></p></div></section>
+
+<section id="d13"><h2>Security associations and combining them</h2>
+<p>A <b>security association (SA)</b> is a one-way relationship identified by three values: a Security Parameters Index (SPI), the destination IP address and the protocol (AH or ESP). Two-way traffic needs two SAs. Each SA records the sequence counter, anti-replay window, algorithms and keys, lifetime and mode. The receiver rejects repeats with a sliding window. Send sequence numbers (window size 8):</p>
+<div class="box"><div class="row"><input id="rQ" type="number" min="1" value="5" style="width:80px" aria-label="Sequence number"><button id="rGo">Send packet</button><button id="rRe">Reset</button></div><div id="rW"></div><p id="rL"></p></div>
+<p>SAs can be combined into bundles by transport adjacency (AH and ESP on one IP packet) or iterated tunneling (tunnels inside tunnels). Four standard cases are: (1) end-to-end between hosts, (2) gateway-to-gateway VPN, (3) a gateway VPN plus end-to-end SAs, and (4) a remote host reaching a gateway and then an internal host.</p></section>
+
+<section id="d14"><h2>Internet Key Exchange (IKE)</h2>
+<p>IKE sets up SAs automatically using Diffie-Hellman (Module 2) for the shared secret and certificates or pre-shared keys for authentication, giving forward secrecy. IKEv2 uses four exchange types:</p>
+<div class="box"><span class="chip" style="background:var(--vio)">IKE_SA_INIT: SA proposal, DH value KE, nonce</span><span class="chip" style="background:var(--teal)">IKE_AUTH: identities, AUTH payload, first child SA</span><span class="chip" style="background:var(--amber);color:#1c1f3a">CREATE_CHILD_SA: new or rekeyed SA</span><span class="chip" style="background:var(--coral)">INFORMATIONAL: delete, error, keepalive</span></div></section>
+
+<section id="d15"><h2>Check your understanding</h2><div class="box" id="quiz"></div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id),enc=new TextEncoder(),hx=u=>[...u].map(b=>b.toString(16).padStart(2,'0')).join('');
+const dig=async(a,t)=>new Uint8Array(await crypto.subtle.digest(a,typeof t=='string'?enc.encode(t):t)),b64=u=>btoa(String.fromCharCode(...u));
+const sw=(id,list,fn)=>{list.forEach((x,i)=>{const b=document.createElement('button');b.textContent=x[0];b.onclick=()=>{[...$(id).children].forEach((c,j)=>c.classList.toggle('on',i==j));fn(x,i)};$(id).appendChild(b)});$(id).children[0].click()};
+// wireless threats
+sw('wB',[['Accidental association','Devices join a neighbour’s network by mistake. Fix: disable auto-join, use 802.1X.'],['Malicious association','An attacker’s soft AP lures a device. Fix: mutual authentication and certificate checks.'],['Ad hoc networks','Peer-to-peer links bypass controls. Fix: disable ad hoc mode by policy.'],['Identity theft','MAC addresses are copied. Fix: do not rely on MAC filtering alone; authenticate users.'],['Man-in-the-middle','Attacker relays and reads traffic. Fix: strong encryption and server authentication.'],['Denial of service','Jamming or flooding the channel. Fix: monitoring and frequency management.'],['Network injection','Forged control frames or routing messages. Fix: management frame protection (802.11w).']],x=>$('wT').textContent=x[1]);
+// 802.11i
+const PH=[['1 Discovery',['STA','AP','Probe request'],['AP','STA','Beacon / probe response (security options)'],['STA','AP','Association request'],'Station and AP agree on cipher suite and authentication method.'],['2 Authentication',['STA','AP','EAPOL start / EAP identity'],['AP','AS','Identity forwarded over RADIUS'],['AS','AP','Access-Accept + master key'],'802.1X with EAP; in home mode a pre-shared key replaces this phase. The AP only passes EAP traffic until success.'],['3 Key management',['AP','STA','Msg 1: ANonce'],['STA','AP','Msg 2: SNonce + MIC'],['AP','STA','Msg 3: install PTK, send GTK'],['STA','AP','Msg 4: acknowledge'],'Four-way handshake derives the pairwise transient key (PTK) from the master key and both nonces, and delivers the group key.'],['4 Protected data',['STA','AP','CCMP-encrypted data frame'],['AP','STA','CCMP-encrypted data frame'],'CCMP gives confidentiality (AES-CTR) and integrity (CBC-MAC).'],['5 Termination',['STA','AP','Deauthentication'],'Keys are removed and the port is closed.']];
+const XP={STA:80,AP:320,AS:560};
+sw('pB',PH,x=>{const m=x.slice(1,-1);let s='';for(const k in XP)s+='<rect x="'+(XP[k]-40)+'" y="4" width="80" height="30" rx="8" fill="'+{STA:'#0b9aa0',AP:'#6a57e0',AS:'#e8446b'}[k]+'"/><text x="'+XP[k]+'" y="24" text-anchor="middle" font-weight="700" style="fill:#fff">'+k+'</text><line x1="'+XP[k]+'" y1="34" x2="'+XP[k]+'" y2="235" stroke="#aab" stroke-dasharray="4 4"/>';
+m.forEach((a,j)=>{const y=62+j*38;s+='<line x1="'+XP[a[0]]+'" y1="'+y+'" x2="'+XP[a[1]]+'" y2="'+y+'" stroke="#e8446b" stroke-width="2.5" marker-end="url(#h)"/><text x="'+(XP[a[0]]+XP[a[1]])/2+'" y="'+(y-6)+'" text-anchor="middle" font-size="12">'+a[2]+'</text>'});
+$('pS').innerHTML='<defs><marker id="h" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="#e8446b"/></marker></defs>'+s;$('pT').textContent=x[x.length-1]});
+// mail components
+sw('eB',[['MUA','Mail User Agent: the client (Outlook, Thunderbird, webmail) that composes and reads mail.'],['MSA','Mail Submission Agent: accepts mail from the MUA on port 587, authenticates the sender and enforces policy.'],['MTA','Message Transfer Agent: relays mail between domains over SMTP, looking up the destination through DNS MX records.'],['MDA','Mail Delivery Agent: puts mail into the recipient’s mailbox after filtering.'],['Store and access','Message store, read by the user through IMAP or POP3.']],x=>$('eT').textContent=x[1]);
+// MIME builder
+function mime(){const asc=s=>/^[\x00-\x7f]*$/.test(s),body=$('fB').value,att=$('fA').checked,e=s=>btoa(unescape(encodeURIComponent(s)));
+let h='From: '+$('fF').value+'\nTo: '+$('fT').value+'\nSubject: '+$('fS').value+'\nMIME-Version: 1.0\n';
+const tp='Content-Type: text/plain; charset="utf-8"\nContent-Transfer-Encoding: '+(asc(body)?'7bit':'base64')+'\n\n'+(asc(body)?body:e(body));
+h+=att?'Content-Type: multipart/mixed; boundary="==B1=="\n\n--==B1==\n'+tp+'\n--==B1==\nContent-Type: text/plain; name="notes.txt"\nContent-Disposition: attachment; filename="notes.txt"\nContent-Transfer-Encoding: base64\n\n'+e('Lab notes: AES done.')+'\n--==B1==--':tp;$('fO').textContent=h}
+['fF','fT','fS','fB','fA'].forEach(i=>$(i).oninput=mime);mime();
+// S/MIME & PGP
+function sm(){const p=$('sF').value=='PGP',sg=$('sSg').checked,en=$('sEn').checked,st=[];
+if(sg)st.push(['Hash the message (SHA-256)','--vio'],['Sign the hash with the sender’s private key','--vio']);if(p)st.push(['Compress (ZIP)','--amber']);
+if(en)st.push(['Make a random session key','--teal'],['Encrypt the message with the session key (AES)','--teal'],['Encrypt the session key with the recipient’s public key','--teal']);
+st.push([p?'Radix-64 encode for email':'Wrap in CMS (SignedData / EnvelopedData) and MIME base64','--coral']);
+$('sO').innerHTML=(sg||en)?st.map((s,i)=>'<span class="chip" style="background:var('+s[1]+')'+(s[1]=='--amber'?';color:#1c1f3a':'')+'">'+(i+1)+'. '+s[0]+'</span>').join(''):'<p class="no">Pick at least one service.</p>';
+$('sN').textContent=p?'Trust: users vouch for each other’s keys (web of trust).':'Trust: a CA certifies each user’s key (hierarchical, X.509).'}
+['sF','sSg','sEn'].forEach(i=>$(i).oninput=sm);sm();
+// DANE
+async function dn(){const u=$('tU').value,m=$('tM').value,f=async t=>m=='0'?hx(enc.encode(t)):hx(await dig(m=='1'?'SHA-256':'SHA-512',t)),a=await f($('tC').value),b=await f($('tP').value);
+$('tO').textContent='_25._tcp.mail.example.com. IN TLSA '+u+' 0 '+m+' ( '+a.slice(0,64)+(a.length>64?'…':'')+' )';$('tR').innerHTML=a==b?'<span class="ok">Presented certificate matches the DNSSEC-signed TLSA record: connection accepted.</span>':'<span class="no">Mismatch: possible impostor or downgrade. Connection refused.</span>'}
+['tU','tM','tC','tP'].forEach(i=>$(i).oninput=dn);dn();
+// SPF
+function spf(){const ip=$('pI').value.trim(),n=s=>/^(\d{1,3}\.){3}\d{1,3}$/.test(s)?s.split('.').reduce((x,y)=>x*256+(+y),0):null,me=n(ip),R={'+':'pass','-':'fail','~':'softfail','?':'neutral'};
+if(me===null){$('pO').innerHTML='<p class="no">Enter an IPv4 address.</p>';return}let out=[],res='neutral (no mechanism matched)';
+for(const t of $('pR').value.trim().split(/\s+/).slice(1)){const q='+-~?'.includes(t[0])?t[0]:'+',w=t.replace(/^[+\-~?]/,'');let hit=false,note='';
+if(w=='all'){hit=true}else if(w.startsWith('ip4:')){const[a,l='32']=w.slice(4).split('/'),x=n(a);if(x===null)note='invalid';else{const d=2**(32-l);hit=Math.floor(x/d)==Math.floor(me/d)}}else note='skipped (needs DNS)';
+out.push('<tr><td class="mono">'+t+'</td><td>'+(note||(hit?'<b class="ok">match</b>':'no match'))+'</td></tr>');if(hit){res=R[q];break}}
+$('pO').innerHTML='<table><tr><th>Mechanism</th><th>Result</th></tr>'+out.join('')+'</table><p>Verdict: <b class="'+(res=='pass'?'ok':'no')+'">'+res+'</b></p>'}
+['pR','pI'].forEach(i=>$(i).oninput=spf);spf();
+// DKIM
+let KP;const gk=()=>KP||(KP=crypto.subtle.generateKey({name:'RSASSA-PKCS1-v1_5',modulusLength:1024,publicExponent:new Uint8Array([1,0,1]),hash:'SHA-256'},false,['sign','verify']));
+const cn=(s,bh)=>'from:alice@example.com\r\nsubject:'+s+'\r\ndkim-signature:v=1; a=rsa-sha256; d=example.com; s=demo; bh='+bh+'; b=';
+async function dk(){const k=await gk(),bh=b64(await dig('SHA-256',$('kB').value)),sig=new Uint8Array(await crypto.subtle.sign('RSASSA-PKCS1-v1_5',k.privateKey,enc.encode(cn($('kS').value,bh)))),rbh=b64(await dig('SHA-256',$('kRB').value));
+const okSig=await crypto.subtle.verify('RSASSA-PKCS1-v1_5',k.publicKey,sig,enc.encode(cn($('kRS').value,bh)));
+$('kO').textContent='DKIM-Signature: v=1; a=rsa-sha256; d=example.com; s=demo;\n h=from:subject; bh='+bh+';\n b='+b64(sig).slice(0,52)+'…';
+$('kR').innerHTML=rbh!=bh?'<span class="no">Fail: body hash differs, the body was changed.</span>':!okSig?'<span class="no">Fail: signature invalid, a signed header was changed.</span>':'<span class="ok">Pass: body hash and signature verify.</span>'}
+['kS','kB','kRS','kRB'].forEach(i=>$(i).oninput=dk);dk();
+// IPsec packet
+function ip(){const P=$('xP').value,T=$('xM').value=='Tunnel',E=P=='ESP',C=[];const I=(l,e,a,c)=>C.push([l,e,a,c]);
+if(T)I('New IP header',0,!E,'--amber');
+if(E){I('ESP header',0,1,'--vio');if(T)I('Orig IP header',1,1,'--teal');else I('',0,0)}else{I('AH',0,1,'--vio');if(T)I('Orig IP header',0,1,'--teal')}
+if(!T&&E)C.pop(),C.unshift(['IP header',0,0,'--teal']);if(!T&&!E)C.unshift(['IP header',0,1,'--teal']);
+I('TCP',E,1,'--coral');I('Data',E,1,'--coral');if(E){I('ESP trailer',1,1,'--vio');I('ESP auth',0,0,'--vio')}
+$('xO').innerHTML=C.map(c=>'<span class="chip" style="background:var('+c[3]+')'+(c[3]=='--amber'?';color:#1c1f3a':'')+'">'+c[0]+(c[1]?'<i>enc</i>':'')+(c[2]?'<i>auth</i>':'')+'</span>').join('');
+$('xN').textContent=E?'ESP: “enc” parts are encrypted; “auth” parts are covered by the ESP integrity check. The outer IP header is not protected.':'AH: authenticates the packet including the IP header (mutable fields such as TTL excluded). Nothing is encrypted.'}
+['xP','xM'].forEach(i=>$(i).oninput=ip);ip();
+// anti-replay
+let top=0,seen=new Set();
+function rw(msg){let h='';for(let s=Math.max(1,top-7);s<=Math.max(top,8);s++)h+='<span class="cell" style="background:'+(seen.has(s)?'var(--teal)':'var(--mut)')+'">'+s+'</span>';$('rW').innerHTML='<p>Window [teal = already received]:</p>'+h;if(msg)$('rL').innerHTML=msg}
+$('rGo').onclick=()=>{const s=+$('rQ').value;if(!(s>=1))return;let m;if(s>top){top=s;seen.add(s);m='<span class="ok">Seq '+s+' accepted; window slides right.</span>'}else if(s<=top-8)m='<span class="no">Seq '+s+' rejected: older than the window.</span>';else if(seen.has(s))m='<span class="no">Seq '+s+' rejected: replay.</span>';else{seen.add(s);m='<span class="ok">Seq '+s+' accepted (late but new).</span>'}rw(m);$('rQ').value=s+1};
+$('rRe').onclick=()=>{top=0;seen=new Set();rw('Reset.')};rw('Try 5, 6, 6 again, then 20, then 5.');
+// quiz
+const Q=[['Which 802.11i phase runs the four-way handshake?',['Discovery','Key management','Termination'],1,'It derives the PTK.'],['What does a DS record hold?',['A zone’s private key','A hash of a child’s DNSKEY','A mail server address'],1,'It links parent to child in the chain of trust.'],['What does DKIM prove?',['Sender IP is allowed','The signed parts came from the domain unchanged','Mail is encrypted'],1,'It is a domain-level signature.'],['Which IPsec mode wraps the original IP header?',['Transport','Tunnel','Neither'],1,'Tunnel mode adds a new outer header.'],['What identifies an SA?',['SPI, destination IP and protocol','Source port only','Certificate serial'],0,'Those three values form the SA triple.']];
+$('quiz').innerHTML=Q.map((q,i)=>'<p><b>'+(i+1)+'. '+q[0]+'</b></p><div class="row">'+q[1].map((o,j)=>'<button data-q="'+i+'" data-j="'+j+'">'+o+'</button>').join('')+'</div><p id="qr'+i+'"></p>').join('');
+$('quiz').onclick=e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.q,ok=+b.dataset.j==Q[i][2];$('qr'+i).innerHTML=ok?'<span class="ok">Correct. '+Q[i][3]+'</span>':'<span class="no">Not quite. '+Q[i][3]+'</span>'};
+</script></body></html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Module 1: Introduction to Network Security</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f7fc;--card:#fff;--ink:#1c1f3a;--mut:#555a7a;--line:#d9dcee;--teal:#0b9aa0;--coral:#e8446b;--amber:#f2a900;--vio:#6a57e0;--tealbg:#d9f3f3;--corbg:#fde1e8;--ambbg:#fff1c9;--viobg:#e5e1fc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12142a;--card:#1c1f3a;--ink:#eceefb;--mut:#a5a9cc;--line:#343862;--tealbg:#0d3b40;--corbg:#4a1e2c;--ambbg:#45380c;--viobg:#2b2760}}
+:root[data-theme="dark"]{--bg:#12142a;--card:#1c1f3a;--ink:#eceefb;--mut:#a5a9cc;--line:#343862;--tealbg:#0d3b40;--corbg:#4a1e2c;--ambbg:#45380c;--viobg:#2b2760}
+html{scroll-padding-top:calc(60px + env(safe-area-inset-top,0px));scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 'Source Serif 4',Georgia,serif}
+h1,h2,h3,nav{font-family:'Bricolage Grotesque',system-ui,sans-serif}
+header{background:linear-gradient(120deg,var(--vio),var(--teal));color:#fff;padding:48px 20px 40px}
+header div,main{max-width:860px;margin:auto}
+h1{font-size:clamp(30px,6vw,52px);line-height:1.1;margin:0 0 10px;font-weight:800}
+header p{margin:0;max-width:60ch;opacity:.95}
+nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;gap:4px;overflow-x:auto;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top,0px))}
+nav a{white-space:nowrap;color:var(--ink);text-decoration:none;font-size:14px;padding:5px 11px;border-radius:99px;font-weight:600}
+nav a:hover{background:var(--viobg)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
+main{padding:10px 18px 60px}
+section{margin-top:44px}
+h2{font-size:30px;margin:0 0 6px;border-left:8px solid var(--vio);padding-left:12px}
+h3{font-size:20px;margin:26px 0 6px;color:var(--vio)}
+p{max-width:70ch}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;overflow-x:auto}
+.t{background:var(--tealbg)}.c{background:var(--corbg)}.a{background:var(--ambbg)}.v{background:var(--viobg)}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font:600 13px 'Bricolage Grotesque',sans-serif}
+button,input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+button{cursor:pointer;font-weight:600}button:hover,button.on{background:var(--vio);color:#fff;border-color:var(--vio)}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+input[type=range]{padding:0;vertical-align:middle}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:15px;word-break:break-all}
+table{border-collapse:collapse;font-size:14px;font-family:'Bricolage Grotesque',sans-serif}
+td,th{border:1px solid var(--line);padding:5px 8px;text-align:center}
+th{background:var(--viobg)}
+.cell{display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:6px;margin:2px;font:700 14px monospace;color:#fff}
+svg{max-width:100%;height:auto}svg text{font-family:'Bricolage Grotesque',sans-serif;fill:#1c1f3a}
+.bar{height:22px;border-radius:6px;color:#fff;font:600 13px 'Bricolage Grotesque',sans-serif;padding:0 8px;line-height:22px;margin:5px 0;white-space:nowrap}
+.ok{color:var(--teal);font-weight:600}.no{color:var(--coral);font-weight:600}
+</style></head><body>
+<header><div><h1>Network Security, Classical Ciphers and DES</h1><p>Module 1 of Cryptography and Network Security (CCA42011)</p></div></header>
+<nav><a href="#s1">Intro</a><a href="#s2">OSI architecture</a><a href="#s3">Attacks</a><a href="#s4">Services</a><a href="#s5">Models</a><a href="#s6">Substitution</a><a href="#s7">Transposition</a><a href="#s8">Steganography</a><a href="#s9">Block ciphers</a><a href="#s10">DES</a><a href="#s11">Modes</a><a href="#s12">Quiz</a></nav>
+<main>
+
+<section id="s1"><h2>Introduction and security trends</h2>
+<p>Computer security protects the confidentiality, integrity and availability of information, often called the <b>CIA triad</b>. Network security applies the same goals to data in motion. Cryptography is the main tool, but it only works inside a wider design of policies, protocols and people.</p>
+<div class="row"><span class="pill t">Confidentiality: only authorised readers</span><span class="pill a">Integrity: no unnoticed change</span><span class="pill c">Availability: service is there when needed</span></div>
+<h3>Trends worth knowing</h3>
+<p>Attacks have moved from curious individuals to organised crime and state groups. Ransomware, phishing and supply chain compromise now dominate. Remote work, cloud services and mobile devices have removed the old network edge, so encryption and authentication must follow the data.</p></section>
+
+<section id="s2"><h2>OSI security architecture</h2>
+<p>ITU-T X.800 defines security with three linked ideas. An <b>attack</b> threatens security. A <b>mechanism</b> detects, prevents or recovers from it. A <b>service</b> is what the user finally receives, built from mechanisms.</p>
+<div class="box"><svg viewBox="0 0 640 150" role="img" aria-label="Attack is countered by mechanism which provides service">
+<rect x="10" y="30" width="170" height="80" rx="14" fill="#e8446b"/><rect x="235" y="30" width="170" height="80" rx="14" fill="#f2a900"/><rect x="460" y="30" width="170" height="80" rx="14" fill="#0b9aa0"/>
+<g font-size="17" font-weight="700" text-anchor="middle"><text x="95" y="65" fill="#fff" style="fill:#fff">Security attack</text><text x="95" y="88" style="fill:#fff" font-size="13" font-weight="400">any action that compromises</text>
+<text x="320" y="65">Security mechanism</text><text x="320" y="88" font-size="13" font-weight="400">detect, prevent, recover</text>
+<text x="545" y="65" style="fill:#fff">Security service</text><text x="545" y="88" style="fill:#fff" font-size="13" font-weight="400">what the user gets</text></g>
+<path d="M180 70h55M405 70h55" stroke="#6a57e0" stroke-width="3" marker-end="url(#ar)"/><defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="#6a57e0"/></marker></defs>
+<text x="207" y="60" font-size="12" text-anchor="middle">is met by</text><text x="432" y="60" font-size="12" text-anchor="middle">implements</text></svg></div></section>
+
+<section id="s3"><h2>Security attacks</h2>
+<p>Passive attacks only observe and are hard to detect, so we prevent them with encryption. Active attacks change or create traffic and are hard to prevent, so we detect and recover. Choose an attack to see the traffic path between Alice, Bob and the opponent Eve.</p>
+<div class="box"><div class="row" id="atkBtns"></div><svg id="atkSvg" viewBox="0 0 520 190" role="img" aria-label="Attack traffic diagram"></svg><p id="atkTxt"></p></div></section>
+
+<section id="s4"><h2>Security services and mechanisms</h2>
+<p>X.800 lists six service families and eight specific mechanisms. Select a service to see which mechanisms can provide it.</p>
+<div class="box"><div class="row" id="svcBtns"></div><div id="matrix"></div></div></section>
+
+<section id="s5"><h2>Models for network security</h2>
+<h3>Model for network security</h3>
+<p>A secure channel needs a security transformation (encryption or a signature), secret information shared by both ends, and a trusted third party when keys must be distributed or disputes settled. Opponent Eve can read or tamper with the channel.</p>
+<div class="box"><svg viewBox="0 0 640 230" role="img" aria-label="Network security model">
+<rect x="10" y="60" width="150" height="100" rx="12" fill="#6a57e0"/><rect x="480" y="60" width="150" height="100" rx="12" fill="#6a57e0"/>
+<rect x="190" y="20" width="260" height="30" rx="8" fill="#f2a900"/><rect x="190" y="180" width="260" height="30" rx="8" fill="#e8446b"/><rect x="260" y="85" width="120" height="50" rx="10" fill="#0b9aa0"/>
+<g text-anchor="middle" font-size="15" font-weight="700" style="fill:#fff"><text x="85" y="100" style="fill:#fff">Alice</text><text x="85" y="122" font-size="12" style="fill:#fff">transform + secret</text><text x="555" y="100" style="fill:#fff">Bob</text><text x="555" y="122" font-size="12" style="fill:#fff">reverse + secret</text><text x="320" y="115" style="fill:#fff">Insecure channel</text><text x="320" y="211" style="fill:#fff">Opponent (Eve)</text></g>
+<text x="320" y="40" text-anchor="middle" font-size="14" font-weight="700">Trusted third party (key distribution)</text>
+<path d="M160 110H260M380 110H480M320 180v-45" stroke="#1c1f3a" stroke-width="3" style="stroke:#6a57e0"/></svg></div>
+<h3>Symmetric cipher model</h3>
+<p>One shared key K encrypts and decrypts: C = E(K, P) and P = D(K, C). Security rests on keeping K secret, not the algorithm (Kerckhoffs’s principle). Attacks on a cipher are ciphertext-only, known-plaintext, chosen-plaintext and chosen-ciphertext.</p>
+<div class="box"><svg viewBox="0 0 640 140" role="img" aria-label="Symmetric cipher model">
+<g font-weight="700" font-size="14" text-anchor="middle"><rect x="10" y="40" width="100" height="50" rx="10" fill="#0b9aa0"/><text x="60" y="70" style="fill:#fff">Plaintext</text>
+<rect x="150" y="40" width="110" height="50" rx="10" fill="#6a57e0"/><text x="205" y="70" style="fill:#fff">Encrypt</text>
+<rect x="300" y="40" width="110" height="50" rx="10" fill="#e8446b"/><text x="355" y="70" style="fill:#fff">Ciphertext</text>
+<rect x="450" y="40" width="80" height="50" rx="10" fill="#6a57e0"/><text x="490" y="70" style="fill:#fff">Decrypt</text>
+<rect x="560" y="40" width="75" height="50" rx="10" fill="#0b9aa0"/><text x="597" y="70" style="fill:#fff">Plaintext</text>
+<rect x="260" y="105" width="100" height="28" rx="14" fill="#f2a900"/><text x="310" y="124">Shared key K</text></g>
+<path d="M110 65h40M260 65h40M410 65h40M530 65h30M205 105V90M490 105V90M205 119H260M360 119H490" stroke="#555a7a" stroke-width="2.5" fill="none"/></svg></div></section>
+
+<section id="s6"><h2>Substitution techniques</h2>
+<p>Substitution replaces each plaintext unit with another. The Caesar cipher uses C = (P + k) mod 26. Vigenère uses a repeating key word, so the shift changes letter by letter. Hill encrypts letter blocks with a matrix (C = K·P mod 26). Playfair encrypts letter pairs from a 5×5 key square. Try Caesar and Vigenère below.</p>
+<div class="box"><div class="row"><input id="cTxt" value="MEET ME AFTER CLASS" aria-label="Plaintext" size="22"><select id="cMode" aria-label="Cipher"><option value="c">Caesar</option><option value="v">Vigenère</option></select>
+<label>Shift <input type="range" id="cShift" min="1" max="25" value="3"> <b id="cShiftV">3</b></label><input id="cKey" value="LEMON" aria-label="Vigenère key" size="8"></div>
+<div id="cAlpha"></div><p>Ciphertext: <b class="mono" id="cOut"></b></p><p class="mono" style="color:var(--mut)" id="cNote"></p></div></section>
+
+<section id="s7"><h2>Transposition techniques</h2>
+<p>Transposition keeps the letters and rearranges their order. Letter frequencies stay the same, which is why it is often combined with substitution.</p>
+<h3>Rail fence</h3>
+<div class="box"><div class="row"><input id="rTxt" value="HELLOWORLD" aria-label="Plaintext"><label>Rails <input type="range" id="rN" min="2" max="5" value="3"> <b id="rNV">3</b></label></div><div id="rGrid"></div><p>Ciphertext (read row by row): <b class="mono" id="rOut"></b></p></div>
+<h3>Columnar transposition</h3>
+<div class="box"><div class="row"><input id="kTxt" value="WE ARE DISCOVERED FLEE" aria-label="Plaintext"><input id="kKey" value="ZEBRA" aria-label="Key" size="8"></div><div id="kGrid"></div><p>Ciphertext (columns in key order): <b class="mono" id="kOut"></b></p></div></section>
+
+<section id="s8"><h2>Steganography</h2>
+<p>Steganography hides that a message exists. In least-significant-bit (LSB) hiding, each message bit replaces the last bit of a pixel’s red value, changing the colour by at most 1 out of 255, which the eye cannot see. Type a short message and compare the original and carrier pixels.</p>
+<div class="box"><div class="row"><input id="sTxt" value="Hi" maxlength="3" aria-label="Secret message" size="6"><span class="mono" id="sBits"></span></div>
+<p>Original pixels</p><div id="sA"></div><p>Pixels carrying the message (hover for red value)</p><div id="sB"></div></div></section>
+
+<section id="s9"><h2>Block ciphers and design principles</h2>
+<p>A block cipher turns an n-bit block into an n-bit block under a key. Shannon’s two principles guide design: <b>confusion</b> hides the link between key and ciphertext, and <b>diffusion</b> spreads each plaintext bit over many ciphertext bits. A <b>Feistel network</b> splits the block into halves and repeats L<sub>i</sub> = R<sub>i−1</sub>, R<sub>i</sub> = L<sub>i−1</sub> XOR F(R<sub>i−1</sub>, K<sub>i</sub>). Decryption runs the same steps with the subkeys reversed, so F need not be invertible.</p>
+<p>Below is a toy 16-bit Feistel cipher. Change the rounds, then flip one input bit to watch the avalanche effect.</p>
+<div class="box"><div class="row"><label>Plaintext (4 hex) <input id="fP" value="4A7C" size="5" maxlength="4"></label><label>Key (4 hex) <input id="fK" value="B3D1" size="5" maxlength="4"></label><label>Rounds <input type="range" id="fR" min="1" max="8" value="4"> <b id="fRV">4</b></label><button id="fFlip">Flip one input bit</button></div>
+<div id="fTab"></div><p>Ciphertext <b class="mono" id="fC"></b> · Decrypted <b class="mono" id="fD"></b> <span id="fOk"></span></p><p id="fAv"></p></div>
+<p>Design choices: more rounds and a strongly nonlinear F raise security but cost speed; the key schedule must avoid weak or related keys.</p></section>
+
+<section id="s10"><h2>The Data Encryption Standard</h2>
+<p>DES (1977) is a 16-round Feistel cipher with a 64-bit block and a 56-bit key. A block passes an initial permutation, 16 rounds, then the inverse permutation. In each round the function F expands the 32-bit half to 48 bits, XORs a 48-bit subkey, passes eight S-boxes (6 bits in, 4 bits out) and permutes the result. The S-boxes supply the nonlinearity.</p>
+<div class="box"><div class="row"><span class="pill v">64-bit block</span><span class="pill t">56-bit key</span><span class="pill a">16 rounds</span><span class="pill c">48-bit subkeys</span></div></div>
+<h3>The strength of DES</h3>
+<p>The key space of 2<sup>56</sup> fell to brute force: the EFF DES Cracker recovered a key in under three days in 1998. Differential and linear cryptanalysis need about 2<sup>47</sup> and 2<sup>43</sup> known or chosen plaintexts, so they are attacks in theory more than practice. DES shows a strong avalanche effect. Triple DES (EDE) lifts the effective key to 112 bits, and AES replaced both. Bars show key size in bits.</p>
+<div class="box"><div class="bar" style="width:22%;background:var(--coral)">DES 56</div><div class="bar" style="width:44%;background:var(--amber)">3DES (2 keys) 112</div><div class="bar" style="width:50%;background:var(--teal)">AES-128 128</div><div class="bar" style="width:100%;background:var(--vio)">AES-256 256</div></div></section>
+
+<section id="s11"><h2>Modes of operation</h2>
+<p>A block cipher alone handles one block. Modes extend it to long messages. Pick a mode and see why ECB leaks patterns. Each swatch is a block; equal colour means equal value. Plaintext has repeated blocks.</p>
+<div class="box"><div class="row" id="mBtns"></div><p>Plaintext blocks</p><div id="mP"></div><p>Ciphertext blocks</p><div id="mC"></div><p id="mTxt"></p></div></section>
+
+<section id="s12"><h2>Check your understanding</h2><div class="box" id="quiz"></div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id),cols=['#6a57e0','#0b9aa0','#e8446b','#f2a900','#2f80ed'];
+function cell(t,c){return '<span class="cell" style="background:'+c+'">'+t+'</span>'}
+// Attacks
+const A=[
+['Release of contents','Passive','Eve reads the message in transit. Defence: encryption.',[[70,60,450,60,'#555a7a'],[260,60,260,140,'#e8446b',1]]],
+['Traffic analysis','Passive','Even with encryption, Eve learns who talks, how often and how much. Defence: traffic padding.',[[70,60,450,60,'#555a7a'],[190,60,230,140,'#e8446b',1]]],
+['Masquerade','Active','Eve pretends to be Alice. Defence: authentication.',[[260,140,450,70,'#e8446b'],[70,60,200,60,'#aaa',1]]],
+['Replay','Active','Eve captures a valid message and sends it again later. Defence: nonces, timestamps.',[[70,60,260,140,'#555a7a'],[260,140,450,60,'#e8446b']]],
+['Modification','Active','Eve alters a message on its way. Defence: integrity checks, MACs, signatures.',[[70,60,260,140,'#555a7a'],[260,140,450,60,'#e8446b']]],
+['Denial of service','Active','Eve floods Bob so real traffic cannot get through. Defence: filtering, rate limits.',[[70,60,380,60,'#aaa',1],[240,150,430,80,'#e8446b'],[300,150,440,90,'#e8446b']]]];
+A.forEach((a,i)=>{const b=document.createElement('button');b.textContent=a[0];b.onclick=()=>atk(i);$('atkBtns').appendChild(b)});
+function atk(i){const a=A[i];[...$('atkBtns').children].forEach((b,j)=>b.classList.toggle('on',i==j));
+let s='<defs><marker id="m" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="context-stroke"/></marker></defs>';
+s+=a[3].map(l=>'<line x1="'+l[0]+'" y1="'+l[1]+'" x2="'+l[2]+'" y2="'+l[3]+'" stroke="'+l[4]+'" stroke-width="3" '+(l[5]?'stroke-dasharray="7 5" ':'')+'marker-end="url(#m)"/>').join('');
+s+='<circle cx="50" cy="60" r="26" fill="#0b9aa0"/><circle cx="470" cy="60" r="26" fill="#6a57e0"/><circle cx="270" cy="150" r="26" fill="#e8446b"/><g text-anchor="middle" font-weight="700" font-size="13" style="fill:#fff"><text x="50" y="65" style="fill:#fff">Alice</text><text x="470" y="65" style="fill:#fff">Bob</text><text x="270" y="155" style="fill:#fff">Eve</text></g>';
+$('atkSvg').innerHTML=s;$('atkTxt').innerHTML='<span class="pill '+(a[1]=='Passive'?'a':'c')+'">'+a[1]+'</span> '+a[2]}
+atk(0);
+// Services matrix
+const M=['Encipherment','Digital signature','Access control','Data integrity','Authentication exchange','Traffic padding','Routing control','Notarization'];
+const S=[['Peer entity authentication',[0,1,4]],['Data origin authentication',[0,1]],['Access control',[2]],['Data confidentiality',[0,6]],['Traffic flow confidentiality',[0,5,6]],['Data integrity',[0,1,3]],['Nonrepudiation',[1,3,7]],['Availability',[3,4]]];
+S.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s[0];b.onclick=()=>mx(i);$('svcBtns').appendChild(b)});
+function mx(k){[...$('svcBtns').children].forEach((b,j)=>b.classList.toggle('on',k==j));
+$('matrix').innerHTML='<table><tr><th></th>'+M.map(m=>'<th>'+m+'</th>').join('')+'</tr>'+S.map((s,i)=>'<tr><th>'+s[0]+'</th>'+M.map((m,j)=>'<td style="'+(i==k?'background:var(--ambbg);':'')+'">'+(s[1].includes(j)?'<b style="color:'+(i==k?'var(--coral)':'var(--teal)')+'">●</b>':'')+'</td>').join('')+'</tr>').join('')+'</table>'}
+mx(0);
+// Caesar/Vigenere
+function alpha(sh){let a='ABCDEFGHIJKLMNOPQRSTUVWXYZ',h='';for(let i=0;i<26;i++)h+=cell(a[i],cols[0]);h+='<br>';for(let i=0;i<26;i++)h+=cell(a[(i+sh)%26],cols[2]);return h}
+function crypt(){const m=$('cMode').value,sh=+$('cShift').value,k=$('cKey').value.toUpperCase().replace(/[^A-Z]/g,'')||'A';$('cShiftV').textContent=sh;
+$('cShift').style.display=m=='c'?'':'none';$('cKey').style.display=m=='v'?'':'none';let j=0,o='';
+for(const ch of $('cTxt').value.toUpperCase()){if(/[A-Z]/.test(ch)){const s=m=='c'?sh:k.charCodeAt(j++%k.length)-65;o+=String.fromCharCode((ch.charCodeAt(0)-65+s)%26+65)}else o+=ch}
+$('cOut').textContent=o;$('cAlpha').innerHTML=m=='c'?alpha(sh):'';$('cAlpha').style.overflowX='auto';$('cAlpha').style.whiteSpace='nowrap';
+$('cNote').textContent=m=='c'?'Top row plain, bottom row cipher alphabet. Only 25 keys, so brute force is instant.':'Key letters repeat over the text; the same plaintext letter can encrypt differently.'}
+['cTxt','cMode','cShift','cKey'].forEach(i=>$(i).oninput=crypt);crypt();
+// Rail fence
+function rail(){const t=$('rTxt').value.toUpperCase().replace(/\s/g,''),n=+$('rN').value;$('rNV').textContent=n;const g=Array.from({length:n},()=>Array(t.length).fill(''));let r=0,d=1;
+for(let i=0;i<t.length;i++){g[r][i]=t[i];if(n>1){if(r==0)d=1;if(r==n-1)d=-1;r+=d}}
+$('rGrid').innerHTML=g.map((row,k)=>'<div style="white-space:nowrap">'+row.map(c=>c?cell(c,cols[k%5]):'<span class="cell" style="opacity:.12;background:#888"></span>').join('')+'</div>').join('');
+$('rOut').textContent=g.map(r=>r.join('')).join('')}
+['rTxt','rN'].forEach(i=>$(i).oninput=rail);rail();
+// Columnar
+function colm(){const k=$('kKey').value.toUpperCase().replace(/[^A-Z]/g,'');if(!k)return;let t=$('kTxt').value.toUpperCase().replace(/[^A-Z]/g,'');const n=k.length;while(t.length%n)t+='X';
+const ord=[...k].map((c,i)=>[c,i]).sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:a[1]-b[1]).map(x=>x[1]),rk=[];ord.forEach((c,r)=>rk[c]=r+1);
+let h='<div style="white-space:nowrap">'+[...k].map((c,i)=>cell(c,'#1c1f3a')).join('')+'</div><div style="white-space:nowrap">'+rk.map(r=>cell(r,'#555a7a')).join('')+'</div>';
+for(let i=0;i<t.length;i+=n)h+='<div style="white-space:nowrap">'+[...t.slice(i,i+n)].map((c,j)=>cell(c,cols[rk[j]%5])).join('')+'</div>';
+$('kGrid').innerHTML=h;$('kOut').textContent=ord.map(c=>{let s='';for(let i=c;i<t.length;i+=n)s+=t[i];return s}).join(' ')}
+['kTxt','kKey'].forEach(i=>$(i).oninput=colm);colm();
+// Stego
+function steg(){const t=$('sTxt').value||'H';const bits=[...t].map(c=>c.charCodeAt(0).toString(2).padStart(8,'0')).join('');$('sBits').textContent=bits.replace(/(.{8})/g,'$1 ');
+let a='',b='';for(let i=0;i<bits.length;i++){const r=150+(i*37)%90,g=120+(i*53)%100,bl=170+(i*29)%70,r2=(r&254)|+bits[i];
+a+='<span class="cell" style="background:rgb('+r+','+g+','+bl+');width:26px" title="R='+r+'"></span>';
+b+='<span class="cell" style="background:rgb('+r2+','+g+','+bl+');width:26px" title="R='+r2+' (LSB='+bits[i]+')"></span>'}
+$('sA').innerHTML=a;$('sB').innerHTML=b}
+$('sTxt').oninput=steg;steg();
+// Feistel
+const rl=(x,n)=>((x<<n)|(x>>(16-n)))&0xffff,Fn=(r,k)=>(((r*5+k)&255)^(r>>3))&255;
+function fe(p,k,n,dec){let L=p>>8,R=p&255,rows=[[L,R]];const ks=[];for(let i=1;i<=n;i++)ks.push(rl(k,i)&255);if(dec)ks.reverse();
+for(const s of ks){[L,R]=[R,L^Fn(R,s)];rows.push([L,R])}return{c:((R<<8)|L),rows}}
+const hx=(v,n)=>v.toString(16).toUpperCase().padStart(n,'0'),bc=x=>x.toString(2).replace(/0/g,'').length;
+function fei(){const p=parseInt($('fP').value,16)&0xffff||0,k=parseInt($('fK').value,16)&0xffff||0,n=+$('fR').value;$('fRV').textContent=n;
+const e=fe(p,k,n,0);$('fTab').innerHTML='<table><tr><th>Round</th><th>L</th><th>R</th></tr>'+e.rows.map((r,i)=>'<tr><td>'+i+'</td><td style="background:var(--tealbg)">'+hx(r[0],2)+'</td><td style="background:var(--viobg)">'+hx(r[1],2)+'</td></tr>').join('')+'</table>';
+const d=fe(e.c,k,n,1);$('fC').textContent=hx(e.c,4);$('fD').textContent=hx(d.c,4);$('fOk').innerHTML=d.c==p?'<span class="ok">matches plaintext</span>':'<span class="no">mismatch</span>'}
+['fP','fK','fR'].forEach(i=>$(i).oninput=fei);
+$('fFlip').onclick=()=>{const p=parseInt($('fP').value,16)&0xffff,k=parseInt($('fK').value,16)&0xffff,n=+$('fR').value,q=p^(1<<Math.floor(Math.random()*16));
+const x=fe(p,k,n,0).c,y=fe(q,k,n,0).c;$('fAv').innerHTML='Flipped input <b class="mono">'+hx(p,4)+' → '+hx(q,4)+'</b> gives <b class="mono">'+hx(x,4)+' → '+hx(y,4)+'</b>: <b>'+bc(x^y)+'</b> of 16 output bits changed. Try 1 round, then 8.'};fei();
+// Modes
+const P=[40,40,90,40,40,200,40,40],E=x=>(x*7+3)*13%256,hue=v=>'hsl('+Math.round(v*360/256)+',70%,50%)';
+const modes=[['ECB','Equal plaintext blocks give equal ciphertext blocks, so the pattern shows through. Avoid it.'],['CBC','Each block is XORed with the previous ciphertext first, so repeats disappear. Needs an IV and runs in sequence.'],['CTR','A counter is encrypted to make a keystream XORed with the data. Parallel and random access, but never reuse a counter.']];
+modes.forEach((m,i)=>{const b=document.createElement('button');b.textContent=m[0];b.onclick=()=>md(i);$('mBtns').appendChild(b)});
+function md(i){[...$('mBtns').children].forEach((b,j)=>b.classList.toggle('on',i==j));let prev=77,C=P.map((p,j)=>i==0?E(p):i==1?(prev=E(p^prev)):(p^E(j+1)));
+const sw=a=>a.map(v=>'<span class="cell" style="background:'+hue(v)+';width:44px;height:44px" title="'+v+'">'+v+'</span>').join('');
+$('mP').innerHTML=sw(P);$('mC').innerHTML=sw(C);$('mTxt').textContent=modes[i][1]}
+md(0);
+// Quiz
+const Q=[['Which attack is passive?',['Replay','Traffic analysis','Masquerade'],1,'Passive attacks only observe.'],['Which structure lets decryption reuse the encryption circuit?',['Feistel network','Substitution box','Rail fence'],0,'Subkeys are applied in reverse.'],['Effective key length of DES?',['64 bits','56 bits','112 bits'],1,'8 of the 64 bits are parity.'],['Which mode leaks repeated-block patterns?',['CBC','CTR','ECB'],2,'Each block is encrypted independently.']];
+$('quiz').innerHTML=Q.map((q,i)=>'<p><b>'+(i+1)+'. '+q[0]+'</b></p><div class="row">'+q[1].map((o,j)=>'<button data-q="'+i+'" data-j="'+j+'">'+o+'</button>').join('')+'</div><p id="qr'+i+'" class="mono"></p>').join('');
+$('quiz').onclick=e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.q,j=+b.dataset.j,ok=j==Q[i][2];$('qr'+i).innerHTML=ok?'<span class="ok">Correct. '+Q[i][3]+'</span>':'<span class="no">Not quite. '+Q[i][3]+'</span>'};
+</script></body></html>
